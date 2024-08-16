@@ -1,0 +1,10 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ cookiecutter.project_name }}
+spec:
+  port:
+    targetPort: 8000 
+  to:
+    kind: Service
+    name: {{ cookiecutter.project_name }}
