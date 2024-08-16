@@ -1,0 +1,43 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: ai-template
+  title: AI Template
+  description: Create a training,serving,common module
+  tags:
+    - RHOAI
+spec:
+  owner: user:user1
+  system: janus-idp
+  type: service
+  parameters:
+     - title: Provide information about the AI component
+       required:
+        - projectId
+        - projectDescription
+       properties:
+           projectId:
+             title: Project Name
+             type: string
+             description: Unique name for the AI Project
+             default: tri-app
+           projectDescription:
+             title: Project Description
+             type: string
+             description: Description of the AI Project
+  steps:
+    - id: sourceCodeTemplate
+      name: Generating the Source Code Component
+      action: fetch:template
+      input:
+        url: ./skeleton
+        cookiecutterCompat: true
+        values:
+          orgName: ${{ parameters.projectId }}
+          repoName: ${{ parameters.projectDescription }}
+  output:
+    text:
+      - title: Additional information
+        content: |
+           * Goto repo
+            
