@@ -1,5 +1,0 @@
-{
-    "project_name": "Model System",
-    "project_slug": "{{ cookiecutter.project_name.lower().replace(' ', '_') }}",
-    "project_description": "A coherent model system to enable keeping the training and serving environments in sync."
-}
