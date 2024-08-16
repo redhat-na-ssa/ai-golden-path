@@ -23,3 +23,7 @@ def load_model():
         model = load(pickle_file)
     _cached_model = model
     return model
+
+
+def test_health() -> bool:
+    return not _cached_model is None
