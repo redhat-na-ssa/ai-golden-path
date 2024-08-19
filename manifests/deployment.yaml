@@ -2,8 +2,22 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ cookiecutter.project_name }}
+  namespace: {{ $Release.Namespace }}
   labels:
     app: {{ cookiecutter.project_name }}
+  annotations:
+    image.openshift.io/triggers:
+      [
+       {
+         "from": {
+           "kind": "ImageStreamTag", 
+           "name": "{{ cookiecutter.project_name }}", 
+           "namespace": "{{ $Release.Namespace }}" 
+         },
+         "fieldPath": "spec.template.spec.containers[?(@.name==\"{{ cookiecutter.project_name }}\")].image", 
+         "paused": false 
+       },
+      ]
 spec:
   replicas: 3
   selector:
