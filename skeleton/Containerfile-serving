@@ -1,4 +1,4 @@
-FROM registry.access.redhat.com/ubi9/python-311:latest
+FROM registry.access.redhat.com/ubi9/python-311:latest as base
 
 COPY common /app/common
 COPY serving /app/serving
@@ -11,4 +11,12 @@ USER 1001
 ENV PYTHONPATH=/app
 WORKDIR /app/serving
 
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
+
+FROM base as testing
+
+CMD python -m unittest discover ../common && python -m unittest
+
+
+FROM base AS serving
+
+CMD ["uvicorn", "app:app", "--workers", "4", "--host", "0.0.0.0", "--port", "8000"]
