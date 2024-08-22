@@ -112,10 +112,11 @@ spec:
       action: fetch:template
       input:
         url: ./manifests
-        copyWithoutTemplating: []
         values:
           component_id: ${{ parameters.projectId }}
           description: ${{ parameters.projectDescription }}
+          project_description: ${{ parameters.projectDescription }}
+          project_name: ${{ parameters.projectId }}
           destination: https://${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{ parameters.projectId }}-gitops.git
           source_repository: https://${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{ parameters.projectId }}.git
           repository_name: ${{ parameters.projectId }}
