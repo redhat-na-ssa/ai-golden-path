@@ -137,6 +137,7 @@ spec:
       name: Publishing to Resource Repository
       action: publish:gitlab
       input:
+        component_id: ${{ parameters.projectId }}
         repoUrl: ${{ parameters.repo.host }}?owner=${{ parameters.repo.owner }}&repo=${{ parameters.component_id }}-gitops
         title: gitops resources for ${{ parameters.component_id }}
         description: gitops resources for ${{ parameters.component_id }}
@@ -146,6 +147,7 @@ spec:
       name: Create ArgoCD Resources
       action: argocd:create-resources
       input:
+        component_id: ${{ parameters.projectId }}
         appName: ${{ parameters.component_id }}-bootstrap
         argoInstance: main
         namespace: janus-argocd
