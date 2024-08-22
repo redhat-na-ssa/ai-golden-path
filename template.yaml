@@ -3,7 +3,7 @@ kind: Template
 metadata:
   name: ai-template
   title: AI Template
-  description: Create a training,serving,common module
+  description: Create a production ready AI app
   tags:
     - rhoai
 spec:
@@ -104,8 +104,7 @@ spec:
       name: Publish
       action: publish:gitlab
       input:
-        project_name: ${{ parameters.projectId }}
-        repoUrl: ${{ parameters.repo.host }}?owner=${{ parameters.repo.owner }}&repo=${{ parameters.project_name }}
+        repoUrl: ${{ parameters.repo.host }}?owner=${{ parameters.repo.owner }}&repo=${{ parameters.projectId }}
         repoVisibility: public
     - id: template-gitops-deployment
       name: Generating Deployment Resources
@@ -138,21 +137,19 @@ spec:
       name: Publishing to Resource Repository
       action: publish:gitlab
       input:
-        component_id: ${{ parameters.projectId }}
-        repoUrl: ${{ parameters.repo.host }}?owner=${{ parameters.repo.owner }}&repo=${{ parameters.component_id }}-gitops
-        title: gitops resources for ${{ parameters.component_id }}
-        description: gitops resources for ${{ parameters.component_id }}
+        repoUrl: ${{ parameters.repo.host }}?owner=${{ parameters.repo.owner }}&repo=${{ parameters.projectId }}-gitops
+        title: gitops resources for ${{ parameters.projectId }}
+        description: gitops resources for ${{ parameters.projectId }}
         sourcePath: ./tenant-gitops
         repoVisibility: public
     - id: create-argocd-resources
       name: Create ArgoCD Resources
       action: argocd:create-resources
       input:
-        component_id: ${{ parameters.projectId }}
-        appName: ${{ parameters.component_id }}-bootstrap
+        appName: ${{ parameters.projectId }}-bootstrap
         argoInstance: main
         namespace: janus-argocd
-        repoUrl: https://${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{ parameters.component_id }}-gitops.git
+        repoUrl: https://${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{ parameters.projectId }}-gitops.git
         path: argocd/
   output:
     text:
