@@ -102,7 +102,7 @@ spec:
       name: Publish
       action: publish:gitlab
       input:
-        repoUrl: ${{ parameters.repo.host }}?owner=${{ parameters.repo.owner }}&repo=${{parameters.projectId}}
+        repoUrl: ${{ parameters.repo.host }}?owner=${{ parameters.repo.owner }}&repo=${{ parameters.repoName }}
         repoVisibility: public
     - id: template-gitops-deployment
       name: Generating Deployment Resources
@@ -113,9 +113,9 @@ spec:
         values:
           component_id: ${{ parameters.projectId }}
           description: ${{ parameters.projectDescription }}
-          destination: https://${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{parameters.projectId}}-gitops.git
-          source_repository: https://${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{parameters.projectId}}.git
-          repository_name: ${{parameters.projectId}}
+          destination: https://${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{ parameters.projectId }}-gitops.git
+          source_repository: https://${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{ parameters.projectId }}.git
+          repository_name: ${{ parameters.projectId }}
           git_owner: ${{ parameters.repo.owner }}
           cluster: .apps.cluster-6dd4x.6dd4x.sandbox1650.opentlc.com
           namespace: ${{ parameters.projectId }}
@@ -134,20 +134,19 @@ spec:
       name: Publishing to Resource Repository
       action: publish:gitlab
       input:
-        repoUrl: ${{ parameters.repo.host }}?owner=${{ parameters.repo.owner }}&repo=${{parameters.projectId}}-gitops
-        title: gitops resources for ${{ parameters.projectId }}
-        description: gitops resources for ${{ parameters.projectId }}
+        repoUrl: ${{ parameters.repo.host }}?owner=${{ parameters.repo.owner }}&repo=${{ parameters.component_id }}-gitops
+        title: gitops resources for ${{ parameters.component_id }}
+        description: gitops resources for ${{ parameters.component_id }}
         sourcePath: ./tenant-gitops
         repoVisibility: public
     - id: create-argocd-resources
       name: Create ArgoCD Resources
       action: argocd:create-resources
       input:
-        appName: ${{ parameters.projectId }}-bootstrap
+        appName: ${{ parameters.component_id }}-bootstrap
         argoInstance: main
         namespace: janus-argocd
-        repoUrl: https://${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{
-          parameters.projectId }}-gitops.git
+        repoUrl: https://${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{ parameters.component_id }}-gitops.git
         path: argocd/
   output:
     text:
