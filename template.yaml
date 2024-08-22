@@ -88,10 +88,11 @@ spec:
         url: ./skeleton
         cookiecutterCompat: true
         values:
+          project_description: ${{ parameters.projectDescription }}
+          project_name: ${{ parameters.projectId }}
           orgName: ${{ parameters.projectId }}
           repoName: ${{ parameters.projectId }}
           component_id: ${{ parameters.projectId }}
-          description: ${{ parameters.projectDescription }}
           namespace: ${{ parameters.component_id }}
           owner: ${{ user.entity.metadata.name }}
           host: ${{ parameters.repo.host }}
