@@ -11,20 +11,75 @@ spec:
   system: janus-idp
   type: service
   parameters:
-     - title: Provide information about the AI component
-       required:
-        - projectId
-        - projectDescription
-       properties:
-           projectId:
-             title: Project Name
-             type: string
-             description: Unique name for the AI Project
-             default: tri-app
-           projectDescription:
-             title: Project Description
-             type: string
-             description: Description of the AI Project
+    - title: Provide information about the AI component
+      required:
+       - projectId
+       - projectDescription
+      properties:
+          projectId:
+            title: Project Name
+            type: string
+            description: Unique name for the AI Project
+            default: ai-app
+          projectDescription:
+            title: Project Description
+            type: string
+            description: Description of the AI Project
+    - title: Provide Image Registry Information
+      required:
+        - image_registry
+      properties:
+        image_registry:
+          title: Image Registry
+          type: string
+          enum:
+            - Openshift
+      dependencies:
+        image_registry:
+          oneOf:
+            - properties:
+                image_registry:
+                  enum:
+                    - Openshift
+                image_host:
+                  title: Image Host
+                  type: string
+                  description: Host for storing image
+                  default: image-registry.openshift-image-registry.svc:5000
+                image_tag:
+                  title: Image Tag
+                  default: latest
+                  type: string
+                  description: Build Image tag
+    - title: Application repository Information
+      required:
+        - repo
+      properties:
+        repo:
+          title: Repository Location
+          type: object
+          properties:
+            host:
+              title: Repo Host
+              type: string
+              description: Your SCM host
+              default: ""
+            owner:
+              title: Repo Owner
+              type: string
+              description: Your SCM host organization/group
+              default: development
+              enum:
+                - development
+            verify_commits:
+              title: Verify Commits
+              type: string
+              description: Verify Git repository commits using Red Hat’s Trusted Artifact
+                Signer (TAS) service
+              default: disabled
+              enum:
+                - enabled
+                - disabled
   steps:
     - id: sourceCodeTemplate
       name: Generating the Source Code Component
@@ -35,9 +90,59 @@ spec:
         values:
           orgName: ${{ parameters.projectId }}
           repoName: ${{ parameters.projectDescription }}
+    - id: publish
+      name: Publish
+      action: publish:gitlab
+      input:
+        repoUrl: ${{ parameters.repo.host }}?owner=${{ parameters.repo.owner }}&repo=${{parameters.component_id}}
+        repoVisibility: public
+    - id: template-gitops-deployment
+      name: Generating Deployment Resources
+      action: fetch:template
+      input:
+        url: ./manifests
+        copyWithoutTemplating: []
+        values:
+          component_id: ${{ parameters.component_id }}
+          description: ${{ parameters.description }}
+          destination: https://${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{parameters.component_id}}-gitops.git
+          source_repository: https://${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{parameters.component_id}}.git
+          repository_name: ${{parameters.component_id}}
+          git_owner: ${{ parameters.repo.owner }}
+          cluster: .apps.cluster-6dd4x.6dd4x.sandbox1650.opentlc.com
+          namespace: ${{ parameters.component_id }}-dev
+          image_registry: ${{ parameters.image_registry }}
+          image_host: ${{ parameters.image_host }}
+          image_organization: ${{ parameters.image_organization }}
+          image_name: ${{ parameters.component_id }}
+          image_tag: ${{ parameters.image_tag }}
+          port: 8080
+          repository_host: ${{ parameters.repo.host }}
+          deployment_name: quarkus-template
+          user: ${{ user.entity.metadata.name }}
+          verify_commits: ${{ parameters.repo.verify_commits }}
+        targetPath: ./tenant-gitops
+    - id: publish-gitops
+      name: Publishing to Resource Repository
+      action: publish:gitlab
+      input:
+        repoUrl: ${{ parameters.repo.host }}?owner=${{ parameters.repo.owner }}&repo=${{parameters.component_id}}-gitops
+        title: gitops resources for ${{ parameters.component_id }}
+        description: gitops resources for ${{ parameters.component_id }}
+        sourcePath: ./tenant-gitops
+        repoVisibility: public
+    - id: create-argocd-resources
+      name: Create ArgoCD Resources
+      action: argocd:create-resources
+      input:
+        appName: ${{ parameters.component_id }}-bootstrap
+        argoInstance: main
+        namespace: janus-argocd
+        repoUrl: https://${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{
+          parameters.component_id }}-gitops.git
+        path: argocd/
   output:
     text:
       - title: Additional information
         content: |
            * Goto repo
-            
