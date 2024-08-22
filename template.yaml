@@ -104,7 +104,7 @@ spec:
       name: Publish
       action: publish:gitlab
       input:
-        repoUrl: ${{ parameters.repo.host }}?owner=${{ parameters.repo.owner }}&repo=${{ parameters.repoName }}
+        repoUrl: ${{ parameters.repo.host }}?owner=${{ parameters.repo.owner }}&repo=${{ parameters.projectId }}
         repoVisibility: public
     - id: template-gitops-deployment
       name: Generating Deployment Resources
