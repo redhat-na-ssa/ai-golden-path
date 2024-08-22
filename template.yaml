@@ -89,12 +89,20 @@ spec:
         cookiecutterCompat: true
         values:
           orgName: ${{ parameters.projectId }}
-          repoName: ${{ parameters.projectDescription }}
+          repoName: ${{ parameters.projectId }}
+          component_id: ${{ parameters.projectId }}
+          description: ${{ parameters.projectDescription }}
+          namespace: ${{ parameters.component_id }}
+          owner: ${{ user.entity.metadata.name }}
+          host: ${{ parameters.repo.host }}
+          destination: ${{ parameters.repo.owner }}/${{ parameters.component_id }}
+          port: 8080
+          verify_commits: ${{ parameters.repo.verify_commits }}
     - id: publish
       name: Publish
       action: publish:gitlab
       input:
-        repoUrl: ${{ parameters.repo.host }}?owner=${{ parameters.repo.owner }}&repo=${{parameters.component_id}}
+        repoUrl: ${{ parameters.repo.host }}?owner=${{ parameters.repo.owner }}&repo=${{parameters.projectId}}
         repoVisibility: public
     - id: template-gitops-deployment
       name: Generating Deployment Resources
@@ -103,18 +111,18 @@ spec:
         url: ./manifests
         copyWithoutTemplating: []
         values:
-          component_id: ${{ parameters.component_id }}
-          description: ${{ parameters.description }}
-          destination: https://${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{parameters.component_id}}-gitops.git
-          source_repository: https://${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{parameters.component_id}}.git
-          repository_name: ${{parameters.component_id}}
+          component_id: ${{ parameters.projectId }}
+          description: ${{ parameters.projectDescription }}
+          destination: https://${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{parameters.projectId}}-gitops.git
+          source_repository: https://${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{parameters.projectId}}.git
+          repository_name: ${{parameters.projectId}}
           git_owner: ${{ parameters.repo.owner }}
           cluster: .apps.cluster-6dd4x.6dd4x.sandbox1650.opentlc.com
-          namespace: ${{ parameters.component_id }}-dev
+          namespace: ${{ parameters.projectId }}
           image_registry: ${{ parameters.image_registry }}
           image_host: ${{ parameters.image_host }}
           image_organization: ${{ parameters.image_organization }}
-          image_name: ${{ parameters.component_id }}
+          image_name: ${{ parameters.projectId }}
           image_tag: ${{ parameters.image_tag }}
           port: 8080
           repository_host: ${{ parameters.repo.host }}
@@ -126,20 +134,20 @@ spec:
       name: Publishing to Resource Repository
       action: publish:gitlab
       input:
-        repoUrl: ${{ parameters.repo.host }}?owner=${{ parameters.repo.owner }}&repo=${{parameters.component_id}}-gitops
-        title: gitops resources for ${{ parameters.component_id }}
-        description: gitops resources for ${{ parameters.component_id }}
+        repoUrl: ${{ parameters.repo.host }}?owner=${{ parameters.repo.owner }}&repo=${{parameters.projectId}}-gitops
+        title: gitops resources for ${{ parameters.projectId }}
+        description: gitops resources for ${{ parameters.projectId }}
         sourcePath: ./tenant-gitops
         repoVisibility: public
     - id: create-argocd-resources
       name: Create ArgoCD Resources
       action: argocd:create-resources
       input:
-        appName: ${{ parameters.component_id }}-bootstrap
+        appName: ${{ parameters.projectId }}-bootstrap
         argoInstance: main
         namespace: janus-argocd
         repoUrl: https://${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{
-          parameters.component_id }}-gitops.git
+          parameters.projectId }}-gitops.git
         path: argocd/
   output:
     text:
