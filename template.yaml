@@ -90,6 +90,7 @@ spec:
         values:
           project_description: ${{ parameters.projectDescription }}
           project_name: ${{ parameters.projectId }}
+          projectId: ${{ parameters.projectId }}
           orgName: ${{ parameters.projectId }}
           repoName: ${{ parameters.projectId }}
           component_id: ${{ parameters.projectId }}
