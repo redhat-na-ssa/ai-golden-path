@@ -5,7 +5,7 @@ metadata:
   title: AI Template
   description: Create a training,serving,common module
   tags:
-    - RHOAI
+    - rhoai
 spec:
   owner: user:user1
   system: janus-idp

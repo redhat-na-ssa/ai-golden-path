@@ -5,6 +5,4 @@ metadata:
     app: {{ cookiecutter.project_name }}
   name: {{ cookiecutter.project_name }}
   namespace: {{ $Release.Namespace }}
-spec:
-  lookupPolicy:
-    local: true
+spec: {}

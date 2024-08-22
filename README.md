@@ -6,6 +6,17 @@ Please note that any data orchestration must maintain synchronization between se
 
 As is always the case for AI models, the only way to use them is if they can be integrated into the rest of your organization. While this template eases that, it is still the user's responsibility to ensure that the model system's API maintain synchronization between training and serving, and is feasible for a calling application.
 
+## Requirements
+
+1) Red Hat OpenShift AI installed on your OpenShift cluster
+2) A StorageProvider enabled that supports the RWX access mode:
+
+    * NFS
+    * [AWS EFS](https://docs.openshift.com/container-platform/4.16/storage/container_storage_interface/persistent-storage-csi-aws-efs.html)
+    * [Azure File](https://docs.openshift.com/container-platform/4.16/storage/container_storage_interface/persistent-storage-csi-azure-file.html)
+    * [Google Compute Platform Filestore](https://docs.openshift.com/container-platform/4.16/storage/container_storage_interface/persistent-storage-csi-google-cloud-file.html)
+    * ODF CephFS
+
 ## System Modules
 
 ### Training
