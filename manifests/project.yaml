@@ -4,3 +4,5 @@ displayName: "{{ $Release.Namespace }}"
 kind: ProjectRequest
 metadata:
   name: {{ $Release.Namespace }}
+  labels:
+    opendatahub.io/dashboard: 'true'
