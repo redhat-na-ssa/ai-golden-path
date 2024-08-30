@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from pandas import DataFrame
 from uvicorn import run
 
-from contract import Contract, Response
+from contract import Contract, Response, status
 from common.model_factory import load_model
 from common.transformations import preprocess, postprocess
 
