@@ -2,7 +2,7 @@ apiVersion: image.openshift.io/v1
 kind: ImageStream
 metadata:
   labels:
-    app: {{ cookiecutter.project_name }}
-  name: {{ cookiecutter.project_name }}
+    app: {{ .Release.Name }}
+  name: {{ .Release.Name }}
   namespace: {{ $Release.Namespace }}
 spec: {}

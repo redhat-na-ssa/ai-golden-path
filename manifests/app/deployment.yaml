@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ cookiecutter.project_name }}
+  name: {{ .Release.Name }}
   namespace: {{ $Release.Namespace }}
   labels:
-    app: {{ cookiecutter.project_name }}
+    app: {{ .Release.Name }}
   annotations:
     image.openshift.io/triggers:
       [
        {
          "from": {
            "kind": "ImageStreamTag", 
-           "name": "{{ cookiecutter.project_name }}", 
+           "name": "{{ .Release.Name }}", 
            "namespace": "{{ $Release.Namespace }}" 
          },
-         "fieldPath": "spec.template.spec.containers[?(@.name==\"{{ cookiecutter.project_name }}\")].image", 
+         "fieldPath": "spec.template.spec.containers[?(@.name==\"{{ .Release.Name }}\")].image", 
          "paused": false 
        },
       ]
@@ -22,14 +22,14 @@ spec:
   replicas: 3
   selector:
     matchLabels:
-      app: {{ cookiecutter.project_name }}
+      app: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        app: {{ cookiecutter.project_name }}
+        app: {{ .Release.Name }}
     spec:
       containers:
-      - name: {{ cookiecutter.project_name }}
-        image: {{ cookiecutter.project_name }}
+      - name: {{ .Release.Name }}
+        image: {{ .Release.Name }}
         ports:
         - containerPort: 8000

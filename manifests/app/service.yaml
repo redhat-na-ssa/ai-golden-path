@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ cookiecutter.project_name }}
+  name: {{ .Release.Name }}
   namespace: {{ $Release.Namespace }}
 spec:
   selector:
-    app.kubernetes.io/name: {{ cookiecutter.project_name }}
+    app.kubernetes.io/name: {{ .Release.Name }}
   ports:
     - protocol: TCP
       port: 8000
