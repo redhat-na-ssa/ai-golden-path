@@ -14,6 +14,7 @@ def save_model(model):
     with open(_model_path, 'wb') as pickle_file:
         dump(model, pickle_file)
 
+# TODO: Use a TTL cache to determine when to reload the model, then run load_model() during the healthcheck
 def load_model():
     global _cached_model
     if _cached_model is not None:
