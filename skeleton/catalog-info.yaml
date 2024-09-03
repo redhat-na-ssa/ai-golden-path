@@ -42,4 +42,4 @@ spec:
   lifecycle: production
   owner: ${{values.owner | dump}}
   definition:
-    $text: ./openapi.yaml
+    $text: ''
