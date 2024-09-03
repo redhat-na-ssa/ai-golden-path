@@ -6,16 +6,34 @@ Please note that any data orchestration must maintain synchronization between se
 
 As is always the case for AI models, the only way to use them is if they can be integrated into the rest of your organization. While this template eases that, it is still the user's responsibility to ensure that the model system's API maintain synchronization between training and serving, and is feasible for a calling application.
 
+## Features
+
+This project contains all of the features you would need to integrate with infrastructure to produce an enterprise-ready AI system.
+
+1) Development
+    1) A templated Python project (see System Modules below) to enable a fully featured AI system
+    2) Jupyter for notebooks in which you can run experiments.
+        1) The production code is cloned and added to the PATH so you can iterate on new model versions while taking advantage of your existing work.
+    3) Dev Spaces (VSCode) enabled so that you can develop and test your production code
+2) CI/CD
+    2) Pipelines (Tekton) for continuous integration and continuous deployment
+        1) Unit tests enabled in the build images and tested during the build process
+    1) ImageStreams for continuous delivery
+3) Deployables
+    1) Dev environment mirrored to production, using the latest tags rather than production tags.
+    2) Production environment, fully deployed on Git tagging.
+        1) Automated model training job scheduled with Data Science Pipelines
+        2) Automated evaluation job to compare models, make decisions about which models should be serving, and monitor and alert on model performance, all scheduled with Data Science Pipelines
+        3) Tightly coupled model service wrapper to handle orchestration and pre-/post-processing.
+            1) Model service wrapper enabled with proper operational concerns (multiple instances, healthchecks, etc.)
+4) OpenShift networking to expose your model system outside your OpenShift cluster
+5) Enabled to work with models loaded into memory from a model registry or an external model serving service
+
+
 ## Requirements
 
 1) Red Hat OpenShift AI installed on your OpenShift cluster
-2) A StorageProvider enabled that supports the RWX access mode:
-
-    * NFS
-    * [AWS EFS](https://docs.openshift.com/container-platform/4.16/storage/container_storage_interface/persistent-storage-csi-aws-efs.html)
-    * [Azure File](https://docs.openshift.com/container-platform/4.16/storage/container_storage_interface/persistent-storage-csi-azure-file.html)
-    * [Google Compute Platform Filestore](https://docs.openshift.com/container-platform/4.16/storage/container_storage_interface/persistent-storage-csi-google-cloud-file.html)
-    * ODF CephFS
+2) Red Hat Developer Hub installed on your OpenShift cluster
 
 ## System Modules
 
