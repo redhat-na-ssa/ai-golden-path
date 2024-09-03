@@ -4,5 +4,5 @@ metadata:
   labels:
     app: {{ .Release.Name }}
   name: {{ .Release.Name }}
-  namespace: {{ $Release.Namespace }}
+  namespace: {{ .Release.Namespace }}
 spec: {}

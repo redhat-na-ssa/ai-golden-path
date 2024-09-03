@@ -1,8 +1,0 @@
-apiVersion: project.openshift.io/v1
-description: "Project for {{ $Release.Namespace }}"
-displayName: "{{ $Release.Namespace }}"
-kind: ProjectRequest
-metadata:
-  name: {{ $Release.Namespace }}
-  labels:
-    opendatahub.io/dashboard: 'true'

@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "backstage.labels" . | nindent 8 }}
+    {{- include "quarkus-template.selectorLabels" . | nindent 8 }}
+  annotations:
+    image.openshift.io/triggers:
+      [
+       {
+         "from": {
+           "kind": "ImageStreamTag", 
+           "name": "{{ .Release.Name }}", 
+           "namespace": "{{ .Release.Namespace }}" 
+         },
+         "fieldPath": "spec.template.spec.containers[?(@.name==\"{{ .Release.Name }}\")].image", 
+         "paused": false 
+       },
+      ]
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+    spec:
+      containers:
+      - name: {{ .Release.Name }}
+        image: {{ .Release.Name }}
+        ports:
+        - containerPort: 8000
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        resources:
+          {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

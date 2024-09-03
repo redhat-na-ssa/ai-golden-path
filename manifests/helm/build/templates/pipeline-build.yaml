@@ -1,0 +1,102 @@
+---
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: {{ .Values.app.name }}-build
+  labels:
+    type: pipeline
+    backstage.io/kubernetes-id: {{ .Values.app.name }}
+spec:
+  params:
+    - name: source-repo
+      description: source repo that contains the application code
+      type: string
+      default: {{ .Values.git.repo }}
+    - name: source-branch
+      description: source branch to build from
+      default: {{ .Values.git.branch }}
+      type: string
+    - name: output-image
+      description: reference of the image that will get created
+      default: {{ include "image.dev-url" . }}
+      type: string
+    - name: git-host
+      type: string
+    - name: git-owner
+      type: string
+    - name: component-id
+      type: string
+  tasks:
+    - name: git-clone
+      params:
+        - name: url
+          value: $(params.source-repo)
+        - name: revision
+          value: $(params.source-branch)
+      taskRef:
+        kind: ClusterTask
+        name: git-clone
+      workspaces:
+        - name: output
+          workspace: source-folder
+{{- if eq .Values.git.verify_commits "enabled" }}
+    - name: verify-commit
+      params:
+      - name: certificate-identity
+        value: $(params.certificate-identity)
+      - name: oidc-issuer
+        value: $(params.oidc-issuer)
+      - name: rekor-url
+        value: $(params.rekor-url)
+      - name: tuf-mirror
+        value: $(params.tuf-mirror)
+      runAfter:
+        - git-clone
+      taskRef:
+        kind: Task
+        name: verify-commit
+      workspaces:
+        - name: repository
+          workspace: source-folder
+    - name: package
+      runAfter:
+        - verify-commit
+{{- else }}
+    - name: package
+      runAfter:
+        - git-clone
+{{- end }}
+      taskRef:
+        kind: ClusterTask
+        name: maven
+      workspaces:
+        - name: source
+          workspace: source-folder
+        - name: maven-settings
+          workspace: maven-settings
+    - name: build-sign-image
+      params:
+      - name: IMAGE
+        value: $(params.output-image)
+      runAfter:
+      - package
+      taskRef:
+        kind: Task
+        name: buildah
+      workspaces:
+      - name: source
+        workspace: source-folder
+  results:
+    - name: IMAGE_URL
+      value: "$(tasks.build-sign-image.results.IMAGE_URL)"
+    - name: IMAGE_DIGEST
+      value: "$(tasks.build-sign-image.results.IMAGE_DIGEST)"
+    - name: CHAINS-GIT_URL
+      value: "$(tasks.git-clone.results.url)"
+    - name: CHAINS-GIT_COMMIT
+      value: "$(tasks.git-clone.results.commit)"
+  workspaces:
+    - name: source-folder
+    - name: maven-settings
+    - name: docker-config
+    - name: reports

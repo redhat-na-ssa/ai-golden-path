@@ -1,3 +1,5 @@
+{{ if .Values.isDev }}
+---
 apiVersion: kubeflow.org/v1
 kind: Notebook
 metadata:
@@ -12,20 +14,24 @@ metadata:
     app: {{ .Release.Name }}
     opendatahub.io/dashboard: "true"
     opendatahub.io/odh-managed: "true"
+    {{- include "backstage.labels" . | nindent 8 }}
+    {{- include "quarkus-template.selectorLabels" . | nindent 8 }}
   name: {{ .Release.Name }}
 spec:
   template:
     spec:
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 6 }}
+      {{- end }}
+      {{- with .Values.affinity }}
       affinity:
-        nodeAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-          - preference:
-              matchExpressions:
-              - key: nvidia.com/gpu.present
-                operator: NotIn
-                values:
-                - "true"
-            weight: 1
+        {{- toYaml . | nindent 6 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 6 }}
+      {{- end }}
       initContainers:
         - name: git-clone
           image: registry.access.redhat.com/ubi9/python-311
@@ -79,13 +85,10 @@ spec:
           periodSeconds: 5
           successThreshold: 1
           timeoutSeconds: 1
+        {{- with .Values.notebookResources }}
         resources:
-          limits:
-            cpu: '2'
-            memory: 8Gi
-          requests:
-            cpu: '1'
-            memory: 8Gi
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
         volumeMounts:
         - mountPath: /opt/app-root/src
           name: {{ .Release.Name }}
@@ -163,3 +166,4 @@ spec:
         secret:
           defaultMode: 420
           secretName: {{ .Release.Name }}-tls
+{{ end }}
