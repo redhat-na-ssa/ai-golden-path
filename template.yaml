@@ -106,6 +106,14 @@ spec:
       input:
         repoUrl: ${{ parameters.repo.host }}?owner=${{ parameters.repo.owner }}&repo=${{ parameters.projectId }}
         repoVisibility: public
+
+    - id: register
+      name: Register
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+        catalogInfoPath: "/catalog-info.yaml"
+
     - id: template-gitops-deployment
       name: Generating Deployment Resources
       action: fetch:template
@@ -152,7 +160,9 @@ spec:
         repoUrl: https://${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{ parameters.projectId }}-gitops.git
         path: argocd/
   output:
-    text:
-      - title: Additional information
-        content: |
-           * Goto repo
+    links:
+      - title: Source Code Repository
+        url: ${{ steps.publish.output.remoteUrl }}
+      - title: Open Component in catalog
+        icon: catalog
+        entityRef: ${{ steps.register.output.entityRef }}
