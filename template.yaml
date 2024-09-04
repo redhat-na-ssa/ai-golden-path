@@ -11,7 +11,7 @@ spec:
   system: janus-idp
   type: service
   parameters:
-    - title: Provide information about the AI component
+    - title: Provide Information About The AI Component
       required:
        - projectId
        - projectDescription
@@ -25,10 +25,16 @@ spec:
             title: Project Description
             type: string
             description: Description of the AI Project
-    - title: Provide Image Registry Information
+    - title: Provide Cluster And Image Registry Information
       required:
+        - host
         - image_registry
       properties:
+        host:
+          title: Cluster Host Root
+          type: string
+          description: Your base wildcard host route
+          default: ".apps.cluster.com"
         image_registry:
           title: Image Registry
           type: string
@@ -88,6 +94,7 @@ spec:
         url: ./skeleton
         cookiecutterCompat: true
         values:
+          cluster: ${{ parameters.host }}
           project_description: ${{ parameters.projectDescription }}
           project_name: ${{ parameters.projectId }}
           projectId: ${{ parameters.projectId }}
