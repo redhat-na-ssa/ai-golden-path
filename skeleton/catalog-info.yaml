@@ -19,7 +19,7 @@ metadata:
     - url: https://devspaces{{cookiecutter.cluster}}/#https://{{cookiecutter.host}}/{{cookiecutter.destination}}
       title: OpenShift Dev Spaces (VS Code)
       icon: web
-    - url: https://devspaces{{cookiecutter.cluster}}/#https://{{cookiecutter.host}}/{{cookiecutter.destination}}?che-editor=che-incubator/che-pycharm/latest
+    - url: https://devspaces{{cookiecutter.cluster}}/#https://{{cookiecutter.host}}/{{cookiecutter.destination}}?che-editor=https://raw.githubusercontent.com/che-incubator/jetbrains-editor-images/main/devfiles/next/che-pycharm/2022.1-next.yaml
       title: OpenShift Dev Spaces (JetBrains PyCharm)
       icon: web
 spec:
