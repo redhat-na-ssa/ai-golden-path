@@ -101,10 +101,10 @@ spec:
           orgName: ${{ parameters.projectId }}
           repoName: ${{ parameters.projectId }}
           component_id: ${{ parameters.projectId }}
-          namespace: ${{ parameters.component_id }}
+          namespace: ${{ parameters.projectId }}
           owner: ${{ user.entity.metadata.name }}
           host: ${{ parameters.repo.host }}
-          destination: ${{ parameters.repo.owner }}/${{ parameters.component_id }}
+          destination: ${{ parameters.repo.owner }}/${{ parameters.projectId }}
           port: 8080
           verify_commits: ${{ parameters.repo.verify_commits }}
     - id: publish
@@ -135,7 +135,7 @@ spec:
           source_repository: https://${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{ parameters.projectId }}.git
           repository_name: ${{ parameters.projectId }}
           git_owner: ${{ parameters.repo.owner }}
-          cluster: .apps.cluster-6dd4x.6dd4x.sandbox1650.opentlc.com
+          cluster: ${{ parameters.host }}
           namespace: ${{ parameters.projectId }}
           image_registry: ${{ parameters.image_registry }}
           image_host: ${{ parameters.image_host }}
