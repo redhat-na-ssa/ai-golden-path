@@ -73,9 +73,9 @@ spec:
     - name: quay-tag-promote
       params:
         - name: srcImageURL
-          value: 'docker://$(params.source-image):$(params.source-image-tag)'
+          value: 'docker://$(params.source-image)-serving:$(params.source-image-tag)'
         - name: destImageURL
-          value: 'docker://$(params.source-image):$(params.destination-image-tag)'
+          value: 'docker://$(params.source-image)-serving:$(params.destination-image-tag)'
         - name: srcTLSverify
           value: 'false'
         - name: destTLSverify
@@ -113,9 +113,9 @@ spec:
     - name: copy-image-tag
       params:
         - name: srcImageURL
-          value: 'docker://$(params.source-image):$(params.source-image-tag)'
+          value: 'docker://$(params.source-image)-serving:$(params.source-image-tag)'
         - name: destImageURL
-          value: 'docker://$(params.destination-image):$(params.destination-image-tag)'
+          value: 'docker://$(params.destination-image)-serving:$(params.destination-image-tag)'
         - name: srcTLSverify
           value: 'false'
         - name: destTLSverify
