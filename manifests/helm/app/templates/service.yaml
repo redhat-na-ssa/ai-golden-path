@@ -4,7 +4,7 @@ metadata:
   name: {{ .Release.Name }}
   namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "quarkus-template.labels" . | nindent 4 }}
+    {{- include "ai-template.labels" . | nindent 4 }}
 spec:
   selector:
     app.kubernetes.io/name: {{ .Release.Name }}

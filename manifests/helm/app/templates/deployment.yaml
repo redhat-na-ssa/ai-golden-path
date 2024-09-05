@@ -5,7 +5,8 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "backstage.labels" . | nindent 8 }}
-    {{- include "quarkus-template.selectorLabels" . | nindent 8 }}
+    {{- include "ai-template.selectorLabels" . | nindent 8 }}
+{{- if .Values.isProd }}
   annotations:
     image.openshift.io/triggers:
       [
@@ -19,6 +20,7 @@ metadata:
          "paused": false 
        },
       ]
+{{- end }}
 spec:
   replicas: 3
   selector:

@@ -1,4 +1,4 @@
-{{ if .Values.isDev }}
+{{- if not .Values.isProd }}
 ---
 apiVersion: kubeflow.org/v1
 kind: Notebook
@@ -15,7 +15,7 @@ metadata:
     opendatahub.io/dashboard: "true"
     opendatahub.io/odh-managed: "true"
     {{- include "backstage.labels" . | nindent 8 }}
-    {{- include "quarkus-template.selectorLabels" . | nindent 8 }}
+    {{- include "ai-template.selectorLabels" . | nindent 8 }}
   name: {{ .Release.Name }}
 spec:
   template:
@@ -166,4 +166,4 @@ spec:
         secret:
           defaultMode: 420
           secretName: {{ .Release.Name }}-tls
-{{ end }}
+{{- end }}

@@ -113,6 +113,7 @@ spec:
       input:
         repoUrl: ${{ parameters.repo.host }}?owner=${{ parameters.repo.owner }}&repo=${{ parameters.projectId }}
         repoVisibility: public
+        defaultBranch: main
 
     - id: register
       name: Register
@@ -144,7 +145,7 @@ spec:
           image_tag: ${{ parameters.image_tag }}
           port: 8080
           repository_host: ${{ parameters.repo.host }}
-          deployment_name: quarkus-template
+          deployment_name: ai-template
           user: ${{ user.entity.metadata.name }}
           verify_commits: ${{ parameters.repo.verify_commits }}
         targetPath: ./tenant-gitops

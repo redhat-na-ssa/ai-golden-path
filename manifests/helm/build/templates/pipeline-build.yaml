@@ -66,23 +66,39 @@ spec:
       runAfter:
         - git-clone
 {{- end }}
-      taskRef:
-        kind: ClusterTask
-        name: maven
-      workspaces:
-        - name: source
-          workspace: source-folder
-        - name: maven-settings
-          workspace: maven-settings
-    - name: build-sign-image
       params:
       - name: IMAGE
-        value: $(params.output-image)
-      runAfter:
-      - package
+        value: $(params.output-image)-serving-tests
       taskRef:
         kind: Task
         name: buildah
+      params:
+      - name: DOCKERFILE
+        value: ./Containerfile-serving
+      - name: BUILD_ARGS
+        value:
+          - --target=testing
+      workspaces:
+      - name: source
+        workspace: source-folder
+    - name: serving-unit-tests
+      image: $(params.output-image)
+      runAfter: package
+    - name: build-sign-image
+      params:
+      - name: IMAGE
+        value: $(params.output-image)-serving
+      runAfter:
+      - serving-unit-tests
+      taskRef:
+        kind: Task
+        name: buildah
+      params:
+      - name: DOCKERFILE
+        value: ./Containerfile-serving
+      - name: BUILD_ARGS
+        value:
+          - --target=serving
       workspaces:
       - name: source
         workspace: source-folder
@@ -97,6 +113,5 @@ spec:
       value: "$(tasks.git-clone.results.commit)"
   workspaces:
     - name: source-folder
-    - name: maven-settings
     - name: docker-config
     - name: reports

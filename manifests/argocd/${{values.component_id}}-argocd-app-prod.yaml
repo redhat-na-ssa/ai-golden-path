@@ -21,7 +21,7 @@ spec:
       - name: environment
         value: prod
       - name: image.tag
-        value: prod
+        value: latest
   destination:
     server: https://kubernetes.default.svc
     namespace: ${{ values.component_id }}-prod

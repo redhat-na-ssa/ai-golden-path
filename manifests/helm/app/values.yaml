@@ -13,7 +13,7 @@ image:
   name: ${{values.image_name}}
   # Overrides the image tag whose default is the chart appVersion.
 
-isDev: False
+isProd: True
 
 route:
   host: ""

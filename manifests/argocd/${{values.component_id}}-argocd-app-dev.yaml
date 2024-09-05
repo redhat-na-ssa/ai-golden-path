@@ -14,8 +14,8 @@ spec:
     path: ./helm/app
     helm:
       parameters:
-      - name: isDev
-        value: True
+      - name: isProd
+        value: False
       - name: namespace.name
         value: ${{ values.component_id }}-dev
       - name: environment

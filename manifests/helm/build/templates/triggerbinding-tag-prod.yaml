@@ -12,11 +12,11 @@ spec:
       value: $(body.tag)
 {{- if ne .Values.image.registry "Quay" }}
     - name: source-image
-      value: {{ include "image.preprod-url" . }}
+      value: {{ include "image.dev-url" . }}
     - name: destination-image
       value: {{ include "image.prod-url" . }}
 {{- end }}
     - name: destination-tag
-      value: prod-$(body.tag)
+      value: $(body.tag)
     - name: namespace
       value: {{ .Values.app.name }}-prod

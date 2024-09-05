@@ -1,3 +1,4 @@
+{{ if .Values.isProd }}
 apiVersion: image.openshift.io/v1
 kind: ImageStream
 metadata:
@@ -6,3 +7,4 @@ metadata:
   name: {{ .Release.Name }}
   namespace: {{ .Release.Namespace }}
 spec: {}
+{{ end }}
