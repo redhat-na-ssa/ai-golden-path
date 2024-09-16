@@ -90,9 +90,8 @@ spec:
         value: $(params.output-image)-serving-tests
       - name: DOCKERFILE
         value: ./Containerfile-serving
-      - name: BUILD_ARGS
-        value:
-          - --target=testing
+      - name: BUILD_EXTRA_ARGS
+        value: --target=testing
       workspaces:
       - name: source
         workspace: source-folder
@@ -116,9 +115,8 @@ spec:
         value: $(params.output-image)-serving
       - name: DOCKERFILE
         value: ./Containerfile-serving
-      - name: BUILD_ARGS
-        value:
-          - --target=serving
+      - name: BUILD_EXTRA_ARGS
+        value: --target=serving
       workspaces:
       - name: source
         workspace: source-folder

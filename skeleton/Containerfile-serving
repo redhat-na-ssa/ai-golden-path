@@ -14,7 +14,7 @@ WORKDIR /app/serving
 
 FROM base as testing
 
-CMD ["sh", "-c", "python -m unittest discover ../common && python -m unittest; exit $?""]
+CMD python -m unittest discover ../common && python -m unittest
 
 
 FROM base AS serving
