@@ -82,7 +82,8 @@ spec:
       - name: source
         workspace: source-folder
     - name: serving-unit-tests
-      image: $(params.output-image)
+      steps:
+        - image: $(params.output-image)
       runAfter: package
     - name: build-sign-image
       params:
