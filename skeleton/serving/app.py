@@ -1,9 +1,9 @@
 from contextlib import asynccontextmanager
-from fastapi import FastAPI
+from fastapi import FastAPI, Response, status
 from pandas import DataFrame
 from uvicorn import run
 
-from contract import Contract, Response, status
+from contract import Contract, ResponseContract
 from common.model_factory import load_model
 from common.transformations import preprocess, postprocess
 
@@ -24,7 +24,7 @@ def healthcheck(response: Response) -> str:
 
 
 @app.post("/predict")
-def predict(request: Contract) -> Response:
+def predict(request: Contract) -> ResponseContract:
     data = DataFrame([request.model_dump()])
 
     preprocessed_data = preprocess(data)
@@ -34,7 +34,7 @@ def predict(request: Contract) -> Response:
 
     results = postprocess(predictions)
 
-    return Response(value=results[0])
+    return ResponseContract(value=results[0])
 
 
 if __name__ == '__main__':
