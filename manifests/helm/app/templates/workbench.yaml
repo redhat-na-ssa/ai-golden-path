@@ -40,7 +40,7 @@ spec:
           args:
             - -ec
             - |-
-              if [ ! -d /opt/app-root/src/code ] || [ -z $( ls -A /opt/app-root/src/code/ ) ]; then git clone {{ cookiecutter.git_repo }} /opt/app-root/src/code; fi
+              if [ ! -d /opt/app-root/src/code ] || [ -z $( ls -A /opt/app-root/src/code/ ) ]; then git clone ${{ values.source_repository }} /opt/app-root/src/code; fi
           volumeMounts:
             - name: mytest
               mountPath: /opt/app-root/src
