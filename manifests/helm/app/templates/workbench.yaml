@@ -14,9 +14,10 @@ metadata:
     app: {{ .Release.Name }}
     opendatahub.io/dashboard: "true"
     opendatahub.io/odh-managed: "true"
-    {{- include "backstage.labels" . | nindent 8 }}
-    {{- include "ai-template.selectorLabels" . | nindent 8 }}
+    {{- include "backstage.labels" . | nindent 4 }}
+    {{- include "ai-template.selectorLabels" . | nindent 4 }}
   name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
 spec:
   template:
     spec:

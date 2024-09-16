@@ -4,8 +4,8 @@ metadata:
   name: {{ .Release.Name }}
   namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "backstage.labels" . | nindent 8 }}
-    {{- include "ai-template.selectorLabels" . | nindent 8 }}
+    {{- include "backstage.labels" . | nindent 4 }}
+    {{- include "ai-template.selectorLabels" . | nindent 4 }}
 {{- if .Values.isProd }}
   annotations:
     image.openshift.io/triggers:
