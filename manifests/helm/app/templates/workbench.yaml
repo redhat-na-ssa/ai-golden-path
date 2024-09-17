@@ -1,11 +1,33 @@
 {{- if not .Values.isProd }}
 ---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  annotations:
+    openshift.io/description: ""
+    openshift.io/display-name: {{ .Release.Name }}
+  finalizers:
+  - kubernetes.io/pvc-protection
+  labels:
+    opendatahub.io/dashboard: "true"
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: ocs-storagecluster-ceph-rbd
+  volumeMode: Filesystem
+---
 apiVersion: kubeflow.org/v1
 kind: Notebook
 metadata:
   annotations:
     notebooks.opendatahub.io/inject-oauth: "true"
-    notebooks.opendatahub.io/last-image-selection: 's2i-generic-data-science-notebook:2024.1'
+#    notebooks.opendatahub.io/last-image-selection: 's2i-generic-data-science-notebook:2024.1'
+    notebooks.opendatahub.io/last-image-selection: 'jupyter-datascience-notebook:2024.1'
     notebooks.opendatahub.io/last-size-selection: Small
     opendatahub.io/username: user
     openshift.io/description: "Workbench with code repo present for quick experimentation"
@@ -43,7 +65,7 @@ spec:
             - |-
               if [ ! -d /opt/app-root/src/code ] || [ -z $( ls -A /opt/app-root/src/code/ ) ]; then git clone ${{ values.source_repository }} /opt/app-root/src/code; fi
           volumeMounts:
-            - name: mytest
+            - name: {{ .Release.Name }}
               mountPath: /opt/app-root/src
           kind: init
       containers:
@@ -58,8 +80,10 @@ spec:
             --ServerApp.base_url=/notebook/{{ .Release.Name }}/{{ .Release.Name }}
             --ServerApp.quit_button=False
         - name: JUPYTER_IMAGE
-          value: image-registry.openshift-image-registry.svc:5000/redhat-ods-applications/s2i-generic-data-science-notebook:2024.1
-        image: image-registry.openshift-image-registry.svc:5000/redhat-ods-applications/s2i-generic-data-science-notebook:2024.1
+          value: image-registry.openshift-image-registry.svc:5000/opendatahub/jupyter-datascience-notebook:2024.1
+        image: image-registry.openshift-image-registry.svc:5000/opendatahub/jupyter-datascience-notebook:2024.1
+#          value: image-registry.openshift-image-registry.svc:5000/redhat-ods-applications/s2i-generic-data-science-notebook:2024.1
+#        image: image-registry.openshift-image-registry.svc:5000/redhat-ods-applications/s2i-generic-data-science-notebook:2024.1
         imagePullPolicy: Always
         livenessProbe:
           failureThreshold: 3

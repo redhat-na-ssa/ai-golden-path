@@ -30,10 +30,11 @@ This project contains all of the features you would need to integrate with infra
 5) Enabled to work with models loaded into memory from a model registry or an external model serving service
 
 
-## Requirements
+## Cluster Requirements
 
-1) Red Hat OpenShift AI installed on your OpenShift cluster
-2) Red Hat Developer Hub installed on your OpenShift cluster
+1) Red Hat OpenShift AI
+2) Red Hat Developer Hub
+3) Janus ArgoCD
 
 ## System Modules
 
