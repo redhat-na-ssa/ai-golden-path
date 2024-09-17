@@ -127,6 +127,15 @@ spec:
       workspaces:
       - name: source
         workspace: source-folder
+    - name: make-data-science-project
+      runAfter:
+      - build-sign-image
+      taskRef:
+        kind: ClusterTask
+        name: openshift-client
+      params:
+        - name: SCRIPT
+          value: oc restart rollout deploy/{{ .Values.app.name }}-dev
   results:
     - name: IMAGE_URL
       value: "$(tasks.build-sign-image.results.IMAGE_URL)"

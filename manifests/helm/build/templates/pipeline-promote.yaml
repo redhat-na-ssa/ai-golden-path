@@ -144,6 +144,14 @@ spec:
       workspaces:
         - name: images-url
           workspace: images-url
+    - name: imagestream-tag
+      taskRef:
+        kind: ClusterTask
+        name: openshift-client
+      params:
+        - name: SCRIPT
+          value: oc tag docker://$(params.source-image):$(params.source-image-tag) ${{ values.component_id }}-serving
+
 {{- end }}
   workspaces:
     - name: images-url
