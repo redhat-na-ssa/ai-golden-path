@@ -49,7 +49,7 @@ spec:
         name: openshift-client
       params:
         - name: SCRIPT
-          value: oc patch namespace/{{ .Release.Namespace }} -p '{"metadata": {"labels": {"opendatahub.io/dashboard": "true"}}}'
+          value: "oc patch namespace/{{ .Release.Namespace }} -p '{\"metadata\": {\"labels\": {\"opendatahub.io/dashboard\": \"true\"}}}'"
     - name: git-clone
       params:
         - name: url
@@ -135,7 +135,7 @@ spec:
         name: openshift-client
       params:
         - name: SCRIPT
-          value: oc restart rollout deploy/{{ .Values.app.name }}-dev
+          value: "oc restart rollout deploy/{{ .Values.app.name }}-dev"
   results:
     - name: IMAGE_URL
       value: "$(tasks.build-sign-image.results.IMAGE_URL)"
