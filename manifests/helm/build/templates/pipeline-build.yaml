@@ -127,7 +127,7 @@ spec:
       workspaces:
       - name: source
         workspace: source-folder
-    - name: make-data-science-project
+    - name: restart-dev
       runAfter:
       - build-sign-image
       taskRef:
