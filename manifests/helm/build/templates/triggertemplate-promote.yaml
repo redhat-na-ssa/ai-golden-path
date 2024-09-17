@@ -67,7 +67,7 @@ spec:
             value: http://tuf.trusted-artifact-signer.svc
         pipelineRef:
           name: {{ .Values.app.name }}-promote
-        serviceAccountName: image-pusher
+        serviceAccountName: pipeline
         timeout: 1h0m0s
         workspaces:
           - name: images-url

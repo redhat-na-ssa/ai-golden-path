@@ -43,13 +43,6 @@ spec:
     - name: component-id
       type: string
   tasks:
-    - name: make-data-science-project
-      taskRef:
-        kind: ClusterTask
-        name: openshift-client
-      params:
-        - name: SCRIPT
-          value: "oc patch namespace/{{ .Release.Namespace }} -p '{\"metadata\": {\"labels\": {\"opendatahub.io/dashboard\": \"true\"}}}'"
     - name: git-clone
       params:
         - name: url

@@ -148,6 +148,8 @@ spec:
       taskRef:
         kind: ClusterTask
         name: openshift-client
+      runAfter:
+        - copy-image-latest
       params:
         - name: SCRIPT
           value: "oc tag docker://$(params.source-image):$(params.source-image-tag) ${{ values.component_id }}-prod-serving"
