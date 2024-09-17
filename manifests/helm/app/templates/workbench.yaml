@@ -67,7 +67,6 @@ spec:
           volumeMounts:
             - name: {{ .Release.Name }}
               mountPath: /opt/app-root/src
-          kind: init
       containers:
       - env:
         - name: PYTHONPATH
