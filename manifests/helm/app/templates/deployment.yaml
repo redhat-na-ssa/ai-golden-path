@@ -33,7 +33,7 @@ spec:
     spec:
       containers:
       - name: {{ .Release.Name }}
-        image: {{ .Release.Name }}-serving
+        image: {{ include "ai-template.image" . }}-serving
         ports:
         - containerPort: 8000
         imagePullPolicy: {{ .Values.image.pullPolicy }}

@@ -152,7 +152,7 @@ spec:
         - copy-image-latest
       params:
         - name: SCRIPT
-          value: "oc tag docker://$(params.source-image):$(params.source-image-tag) ${{ values.component_id }}-prod-serving"
+          value: "oc tag docker://$(params.source-image):$(params.source-image-tag) ${{ values.component_id }}-serving"
 
 {{- end }}
   workspaces:
