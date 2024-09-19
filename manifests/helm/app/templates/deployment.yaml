@@ -22,7 +22,7 @@ metadata:
       ]
 {{- end }}
 spec:
-  replicas: 3
+  replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
       app: {{ .Release.Name }}
@@ -33,12 +33,24 @@ spec:
     spec:
       containers:
       - name: {{ .Release.Name }}
-        image: {{ include "ai-template.image" . }}-serving
+        image: {{ include "ai-template.image" . }}
         ports:
         - containerPort: 8000
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         resources:
           {{- toYaml .Values.resources | nindent 12 }}
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 10
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

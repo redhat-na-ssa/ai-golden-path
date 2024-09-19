@@ -9,7 +9,7 @@ spec:
     - name: git-revision
       value: $(body.commit.id)
     - name: source-tag
-      value: $(body.tag)
+      value: latest
 {{- if ne .Values.image.registry "Quay" }}
     - name: source-image
       value: {{ include "image.dev-url" . }}
