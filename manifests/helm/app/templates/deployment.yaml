@@ -48,11 +48,6 @@ spec:
         envFrom:
         - secretRef:
             name: aws-connection-my-storage
-              secretKeyRef:
-                name: MLFLOW_S3_ENDPOINT_URL
-                key: AWS_S3_ENDPOINT
-        - secretRef:
-            name: aws-connection-my-storage
         name: {{ .Release.Name }}
         image: {{ include "ai-template.image" . }}
         ports:
