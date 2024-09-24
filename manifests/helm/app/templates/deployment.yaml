@@ -32,7 +32,18 @@ spec:
         app: {{ .Release.Name }}
     spec:
       containers:
-      - name: {{ .Release.Name }}
+      - env:
+        - name: MLFLOW_TRACKING_URI
+          value: http://mlflow.mlflow.svc.cluster.local:5000
+        envFrom:
+        - secretRef:
+            name: aws-connection-my-storage
+              secretKeyRef:
+                name: MLFLOW_S3_ENDPOINT_URL
+                key: AWS_S3_ENDPOINT
+        - secretRef:
+            name: aws-connection-my-storage
+        name: {{ .Release.Name }}
         image: {{ include "ai-template.image" . }}
         ports:
         - containerPort: 8000

@@ -35,6 +35,7 @@ This project contains all of the features you would need to integrate with infra
 1) Red Hat OpenShift AI
 2) Red Hat Developer Hub
 3) Janus ArgoCD
+4) MLflow
 
 ## System Modules
 
