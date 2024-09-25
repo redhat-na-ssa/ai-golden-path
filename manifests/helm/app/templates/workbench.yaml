@@ -26,8 +26,7 @@ kind: Notebook
 metadata:
   annotations:
     notebooks.opendatahub.io/inject-oauth: "true"
-#    notebooks.opendatahub.io/last-image-selection: 's2i-generic-data-science-notebook:2024.1'
-    notebooks.opendatahub.io/last-image-selection: 'jupyter-datascience-notebook:2024.1'
+    notebooks.opendatahub.io/last-image-selection: 's2i-generic-data-science-notebook:2024.1'
     notebooks.opendatahub.io/last-size-selection: Small
     argocd.argoproj.io/sync-wave: "4"
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
@@ -80,7 +79,7 @@ spec:
             --ServerApp.base_url=/notebook/{{ .Release.Name }}/{{ .Release.Name }}
             --ServerApp.quit_button=False
         - name: JUPYTER_IMAGE
-          value: image-registry.openshift-image-registry.svc:5000/opendatahub/jupyter-datascience-notebook:2024.1
+          value: image-registry.openshift-image-registry.svc:5000/redhat-ods-applications/s2i-generic-data-science-notebook:2024.1
         - name: MLFLOW_TRACKING_URI
           value: http://mlflow.mlflow.svc.cluster.local:5000
         - name: MLFLOW_S3_ENDPOINT_URL
@@ -91,9 +90,7 @@ spec:
         envFrom:
         - secretRef:
             name: aws-connection-my-storage
-        image: image-registry.openshift-image-registry.svc:5000/opendatahub/jupyter-datascience-notebook:2024.1
-#          value: image-registry.openshift-image-registry.svc:5000/redhat-ods-applications/s2i-generic-data-science-notebook:2024.1
-#        image: image-registry.openshift-image-registry.svc:5000/redhat-ods-applications/s2i-generic-data-science-notebook:2024.1
+        image: image-registry.openshift-image-registry.svc:5000/redhat-ods-applications/s2i-generic-data-science-notebook:2024.1
         imagePullPolicy: IfNotPresent
         livenessProbe:
           failureThreshold: 3
