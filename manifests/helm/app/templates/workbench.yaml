@@ -65,7 +65,7 @@ spec:
             - |-
               if [ ! -d /opt/app-root/src/code ] || [ -z $( ls -A /opt/app-root/src/code/ ) ]; then git clone ${{ values.source_repository }} /opt/app-root/src/code; fi
           volumeMounts:
-            - name: {{ .Release.Name }}
+            - name: {{ .Release.Name }}-workbench
               mountPath: /opt/app-root/src
       containers:
       - env:
@@ -123,7 +123,7 @@ spec:
         {{- end }}
         volumeMounts:
         - mountPath: /opt/app-root/src
-          name: {{ .Release.Name }}
+          name: {{ .Release.Name }}-workbench
         workingDir: /opt/app-root/src
       - args:
         - --provider=openshift
@@ -187,9 +187,9 @@ spec:
       enableServiceLinks: false
       serviceAccountName: {{ .Release.Name }}-workbench
       volumes:
-      - name: {{ .Release.Name }}
+      - name: {{ .Release.Name }}-workbench
         persistentVolumeClaim:
-          claimName: {{ .Release.Name }}
+          claimName: {{ .Release.Name }}-workbench
       - name: oauth-config
         secret:
           defaultMode: 420
