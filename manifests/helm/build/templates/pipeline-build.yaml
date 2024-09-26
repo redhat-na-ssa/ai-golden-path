@@ -128,7 +128,7 @@ spec:
         name: openshift-client
       params:
         - name: SCRIPT
-          value: "oc rollout restart deploy/{{ .Values.app.name }}-dev"
+          value: "oc rollout restart deploy/{{ .Values.app.name }}-dev-app"
   results:
     - name: IMAGE_URL
       value: "$(tasks.build-sign-image.results.IMAGE_URL)"

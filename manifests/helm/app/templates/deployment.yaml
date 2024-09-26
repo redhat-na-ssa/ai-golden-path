@@ -6,8 +6,9 @@ metadata:
   labels:
     {{- include "backstage.labels" . | nindent 4 }}
     {{- include "ai-template.selectorLabels" . | nindent 4 }}
-{{- if .Values.isProd }}
   annotations:
+    argocd.argoproj.io/sync-wave: "3"
+{{- if .Values.isProd }}
     image.openshift.io/triggers:
       [
        {
