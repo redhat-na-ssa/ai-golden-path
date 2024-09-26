@@ -28,7 +28,7 @@ metadata:
     notebooks.opendatahub.io/inject-oauth: "true"
     notebooks.opendatahub.io/last-image-selection: 's2i-generic-data-science-notebook:2024.1'
     notebooks.opendatahub.io/last-size-selection: Small
-    argocd.argoproj.io/sync-wave: "2"
+    argocd.argoproj.io/sync-wave: "4"
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
     openshift.io/description: "Workbench with code repo present for quick experimentation"
     openshift.io/display-name: {{ .Release.Name }}-workbench
