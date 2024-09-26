@@ -14,7 +14,7 @@ def new_model():
     return model
 
 def save_model(model):
-    save_to_mlflow(model, MODEL_VERSION, experiment_name={{ cookiecutter.project_name }})
+    save_to_mlflow(model, MODEL_VERSION, experiment_name="{{ cookiecutter.project_name }}")
 
 # TODO: Use a TTL cache to determine when to reload the model, then run load_model() during the healthcheck
 def load_model():
@@ -22,7 +22,7 @@ def load_model():
     if _cached_model is not None:
         return _cached_model
 
-    model = list_models(MODEL_VERSION, experiment_name={{ cookiecutter.project_name }}, active_state=ModelStatus.Active)[0]
+    model = list_models(MODEL_VERSION, experiment_name="{{ cookiecutter.project_name }}", active_state=ModelStatus.Active)[0]
     
     _cached_model = model
     return model

@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Release.Name }}
+  name: {{ .Release.Name }}-app
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "backstage.labels" . | nindent 4 }}
@@ -16,7 +16,7 @@ metadata:
            "name": "{{ .Release.Name }}", 
            "namespace": "{{ .Release.Namespace }}" 
          },
-         "fieldPath": "spec.template.spec.containers[?(@.name==\"{{ .Release.Name }}-serving\")].image", 
+         "fieldPath": "spec.template.spec.containers[?(@.name==\"{{ .Release.Name }}-app\")].image", 
          "paused": false 
        },
       ]
@@ -25,11 +25,11 @@ spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ .Release.Name }}
+      app: {{ .Release.Name }}-app
   template:
     metadata:
       labels:
-        app: {{ .Release.Name }}
+        app: {{ .Release.Name }}-app
     spec:
       containers:
       - env:
@@ -48,7 +48,7 @@ spec:
         envFrom:
         - secretRef:
             name: aws-connection-my-storage
-        name: {{ .Release.Name }}
+        name: {{ .Release.Name }}-app
         image: {{ include "ai-template.image" . }}
         ports:
         - containerPort: 8000

@@ -1,7 +1,7 @@
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
-  name: {{ .Release.Name }}
+  name: {{ .Release.Name }}-app
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "ai-template.labels" . | nindent 4 }}
@@ -16,4 +16,4 @@ spec:
     targetPort: 8000 
   to:
     kind: Service
-    name: {{ .Release.Name }}
+    name: {{ .Release.Name }}-app
