@@ -5,7 +5,7 @@ from mlflow.entities import Run, Experiment
 from pandas import DataFrame, Series
 from pkg_resources import packaging
 
-from mlflow_utilities.model_status import ModelStatus
+from common.model_status import ModelStatus
 
 
 def _parse_semver(version: str) -> Tuple[str, str, str]:
