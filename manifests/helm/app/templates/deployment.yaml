@@ -8,20 +8,6 @@ metadata:
     {{- include "ai-template.selectorLabels" . | nindent 4 }}
   annotations:
     argocd.argoproj.io/sync-wave: "5"
-{{- if .Values.isProd }}
-    image.openshift.io/triggers:
-      [
-       {
-         "from": {
-           "kind": "ImageStreamTag", 
-           "name": "{{ .Release.Name }}", 
-           "namespace": "{{ .Release.Namespace }}" 
-         },
-         "fieldPath": "spec.template.spec.containers[?(@.name==\"{{ .Release.Name }}-app\")].image", 
-         "paused": false 
-       },
-      ]
-{{- end }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -31,6 +17,20 @@ spec:
     metadata:
       labels:
         app: {{ .Release.Name }}-app
+{{- if .Values.isProd }}
+      image.openshift.io/triggers:
+        [
+         {
+           "from": {
+             "kind": "ImageStreamTag", 
+             "name": "{{ .Release.Name }}", 
+             "namespace": "{{ .Release.Namespace }}" 
+           },
+           "fieldPath": "spec.template.spec.containers[?(@.name==\"{{ .Release.Name }}-app\")].image", 
+           "paused": false 
+         },
+        ]
+{{- end }}
     spec:
       containers:
       - env:

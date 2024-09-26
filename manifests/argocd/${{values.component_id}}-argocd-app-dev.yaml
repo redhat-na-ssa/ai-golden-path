@@ -30,6 +30,10 @@ spec:
       jqPathExpressions:
         - '.imagePullSecrets[] | select(.name|test(".-dockercfg-."))'
       kind: ServiceAccount
+    - group: '*'
+      jqPathExpressions:
+        - '.'
+      kind: Notebook
   syncPolicy:
     automated:
       prune: true
