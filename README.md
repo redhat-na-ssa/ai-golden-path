@@ -57,4 +57,4 @@ Your model registry bridges between environments and therefore must be accessibl
 
 ## Model Version
 
-Your model version is only lightly coupled with the software version. However, specifically note that there is no way to increment the model version without changing the code version, as model version changes require code changes. As such, the only way to manage it is through the software itself as a variable. This goes in the common.__init__ file.
+Your model version is only lightly coupled with the software version. However, specifically note that there is no way to increment the model version without changing the code version, as model version changes require code changes. As such, the only way to manage it is through the software itself as a variable. This goes in the `common.__init__.py` file.

@@ -87,6 +87,16 @@ spec:
             secretKeyRef:
               name: aws-connection-my-storage
               key: AWS_S3_ENDPOINT
+        - name: PIP_CERT
+          value: /etc/pki/tls/custom-certs/ca-bundle.crt
+        - name: REQUESTS_CA_BUNDLE
+          value: /etc/pki/tls/custom-certs/ca-bundle.crt
+        - name: SSL_CERT_FILE
+          value: /etc/pki/tls/custom-certs/ca-bundle.crt
+        - name: PIPELINES_SSL_SA_CERTS
+          value: /etc/pki/tls/custom-certs/ca-bundle.crt
+        - name: GIT_SSL_CAINFO
+          value: /etc/pki/tls/custom-certs/ca-bundle.crt
         envFrom:
         - secretRef:
             name: aws-connection-my-storage
@@ -124,6 +134,10 @@ spec:
         volumeMounts:
         - mountPath: /opt/app-root/src
           name: {{ .Release.Name }}-workbench
+        - mountPath: /etc/pki/tls/custom-certs/ca-bundle.crt
+          name: trusted-ca
+          readOnly: true
+          subPath: ca-bundle.crt
         workingDir: /opt/app-root/src
       - args:
         - --provider=openshift
@@ -138,7 +152,7 @@ spec:
         - --upstream-ca=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt
         - --email-domain=*
         - --skip-provider-button
-        - --openshift-sar={"verb":"get","resource":"notebooks","resourceAPIGroup":"kubeflow.org","resourceName":"{{ .Release.Name }}-workbench","  ":"$(NAMESPACE)"}
+        - --openshift-sar={"verb":"get","resource":"notebooks","resourceAPIGroup":"kubeflow.org","resourceName":"{{ .Release.Name }}-workbench","namespace":"$(NAMESPACE)"}
         env:
         - name: NAMESPACE
           valueFrom:
@@ -198,4 +212,11 @@ spec:
         secret:
           defaultMode: 420
           secretName: {{ .Release.Name }}-workbench-tls
+      - configMap:
+          items:
+            - key: ca-bundle.crt
+              path: ca-bundle.crt
+          name: workbench-trusted-ca-bundle
+          optional: true
+        name: trusted-ca
 {{- end }}
