@@ -294,3 +294,33 @@ def list_models(model_version: Union[str, Tuple[str, str, str]],
         models.append(mlflow.sklearn.load_model(filepath))
 
     return models
+
+
+def list_models_with_metadata(model_version: Union[str, Tuple[str, str, str]],
+                experiment_id: Optional[str] = None,
+                experiment_name: Optional[str] = None,
+                active_state: Optional[ModelStatus] = None,
+                submodel_name: Optional[str] = None,
+                extra_immutable_metadata: Dict[str, str] = {},
+                extra_mutable_metadata: Dict[str, float] = {}) -> Dict[str, Tuple[Sequence, Sequence]]:
+    """
+    List models in MLFlow for the semantic versioning framework.
+
+    Args:
+        model_version (Union[str, Tuple[str, str, str]]): Semantic Version of the model. Can be handled as either a string or as a tuple of 3 numbers (major, minor, and micro version)
+        experiment_id (Optional[str]): Experiment Id if known. Optional with the experiment name.
+        experiment_name (Optional[str]): Experiment Name if known. Optional with the experiment id.
+        active_state (Optional[ModelStatus]): Optional[ModelStatus]: Which production state to search and update.
+        submodel_name (Optional[str]): Submodel name if you have one. If not provided, uses the name of the experiment.
+        extra_immutable_metadata (Dict[str, str]): Any additional metadata inherent to the model or model process that you want to keep track of.
+        extra_mutable_metadata (Dict[str, float]): Any additional metadata specific to the model that can change over time.
+    """
+    runs = list_runs(model_version, experiment_id, experiment_name, active_state, submodel_name, extra_immutable_metadata, extra_mutable_metadata)
+
+    models = dict()
+
+    for _, run in runs.iterrows():
+        filepath = run.artifact_uri
+        models[run.run_id] = (mlflow.sklearn.load_model(filepath), run)
+
+    return models

@@ -12,7 +12,6 @@ def preprocess(data: DataFrame) -> DataFrame:
     return transformed_data
 
 def postprocess(data: DataFrame) -> DataFrame:
-    transformed_data
     transformed_data = data
     # Any postprocessing that needs to happen when both training and serving goes here
 

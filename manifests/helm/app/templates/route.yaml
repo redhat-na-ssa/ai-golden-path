@@ -13,7 +13,7 @@ spec:
   path: {{ .path }}
   {{- end }}
   port:
-    targetPort: 8000 
+    targetPort: http 
   to:
     kind: Service
     name: {{ .Release.Name }}-app
