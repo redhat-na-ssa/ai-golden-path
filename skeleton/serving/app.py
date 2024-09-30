@@ -67,7 +67,8 @@ def predict(request: Contract) -> ResponseContract:
 
     results = postprocess(predictions)
 
-    metadata = ModelMetadata(model_version=this_model_version,
+    metadata = ModelMetadata(model_id=model_id,
+                             model_version=this_model_version,
                              submodel_name=this_model[1]['params.submodel_name'])
     return ResponseContract(value=results[0],
                             metadata=[metadata])

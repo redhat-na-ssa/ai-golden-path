@@ -7,6 +7,7 @@ class Contract(BaseModel):
     pass
 
 class ModelMetadata(BaseModel):
+    model_id: str
     model_version: str
     submodel_name: str
     extra_metadata: List[ModelMetadata] = Field(default_factory=list)
