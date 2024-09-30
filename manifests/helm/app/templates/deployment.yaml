@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-app
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "backstage.labels" . | nindent 4 }}
+    {{- include "ai-template.selectorLabels" . | nindent 4 }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "5"
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-app
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-app
+{{- if .Values.isProd }}
+      image.openshift.io/triggers:
+        [
+         {
+           "from": {
+             "kind": "ImageStreamTag", 
+             "name": "{{ .Release.Name }}", 
+             "namespace": "{{ .Release.Namespace }}" 
+           },
+           "fieldPath": "spec.template.spec.containers[?(@.name==\"{{ .Release.Name }}-app\")].image", 
+           "paused": false 
+         },
+        ]
+{{- end }}
+    spec:
+      containers:
+      - env:
+        - name: MLFLOW_TRACKING_URI
+          value: http://mlflow.mlflow.svc.cluster.local:5000
+        - name: MLFLOW_S3_ENDPOINT_URL
+          valueFrom:
+            secretKeyRef:
+              name: aws-connection-my-storage
+              key: AWS_S3_ENDPOINT
+        envFrom:
+        - secretRef:
+            name: aws-connection-my-storage
+        envFrom:
+        - secretRef:
+            name: aws-connection-my-storage
+        name: {{ .Release.Name }}-app
+        image: {{ include "ai-template.image" . }}
+        ports:
+        - containerPort: 8000
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        resources:
+          {{- toYaml .Values.resources | nindent 10 }}
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 10
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

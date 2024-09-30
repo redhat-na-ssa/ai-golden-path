@@ -1,0 +1,23 @@
+schemaVersion: 2.2.0
+metadata:
+  name: {{ cookiecutter.project_name }}
+attributes:
+#   controller.devfile.io/scc: container-build
+  controller.devfile.io/storage-type: ephemeral
+  projects:
+    - name: {{ cookiecutter.project_name }}
+      git:
+        remotes:
+          origin: "{{ cookiecutter.git_repo }}"
+        checkoutFrom:
+          revision: main
+components:
+  - attributes:
+      controller.devfile.io/merge-contribution: true
+    container:
+      image: registry.redhat.io/devspaces/udi-rhel8
+      memoryLimit: 2G
+      cpuLimit: 500m
+      mountSources: true
+      sourceMapping: /projects
+    name: python

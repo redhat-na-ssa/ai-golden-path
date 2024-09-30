@@ -1,0 +1,44 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: {{cookiecutter.component_id}}
+  {%- if cookiecutter.project_description %}
+  description: {{cookiecutter.project_description}}
+  {%- endif %}
+  annotations:
+    argocd/app-selector: rht-gitops.com/janus-argocd={{cookiecutter.component_id}}-bootstrap
+    backstage.io/kubernetes-id: {{cookiecutter.component_id}}
+    janus-idp.io/tekton: {{cookiecutter.component_id}}
+    backstage.io/source-location: url:https://{{cookiecutter.host}}/{{cookiecutter.destination}}
+    backstage.io/techdocs-ref: url:https://{{cookiecutter.host}}/{{cookiecutter.destination}}
+    gitlab.com/project-slug: {{cookiecutter.destination}}
+  tags:
+    - python
+    - ai
+  links:
+    - url: https://devspaces{{cookiecutter.cluster}}/#https://{{cookiecutter.host}}/{{cookiecutter.destination}}
+      title: OpenShift Dev Spaces (VS Code)
+      icon: web
+    - url: https://devspaces{{cookiecutter.cluster}}/#https://{{cookiecutter.host}}/{{cookiecutter.destination}}?che-editor=https://raw.githubusercontent.com/che-incubator/jetbrains-editor-images/main/devfiles/next/che-pycharm/2022.1-next.yaml
+      title: OpenShift Dev Spaces (JetBrains PyCharm)
+      icon: web
+spec:
+  type: service
+  lifecycle: production
+  owner: {{cookiecutter.owner}}
+  providesApis:
+    - {{cookiecutter.component_id}}
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: {{cookiecutter.component_id}}
+  {%- if cookiecutter.project_description %}
+  description: {{cookiecutter.project_description}}
+  {%- endif %}
+spec:
+  type: openapi
+  lifecycle: production
+  owner: {{cookiecutter.owner}}
+  definition:
+    $text: ''

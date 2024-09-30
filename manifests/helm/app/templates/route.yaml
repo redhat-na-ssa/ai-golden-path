@@ -1,0 +1,19 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ .Release.Name }}-app
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "ai-template.labels" . | nindent 4 }}
+spec:
+  {{- if .host }}
+  host: {{ .host }}
+  {{- end }}
+  {{- if .path }}
+  path: {{ .path }}
+  {{- end }}
+  port:
+    targetPort: http 
+  to:
+    kind: Service
+    name: {{ .Release.Name }}-app

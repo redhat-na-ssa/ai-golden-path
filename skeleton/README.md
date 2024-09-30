@@ -11,4 +11,5 @@ Once your code is generated, you need to make several additional steps to make t
 3) Fill in the details! (I.e. build your model pipeline)
     1) training.load_data is where you load your data
     2) common.transformations is where your pre- and post-processing go
+        * Please note that these functions are used for serving, training, and evaluation, so the inputs need to match across all three of them. The implementations for these functions just take generic DataFrames with no type checks on them in the interest of usability. If you are interested in using DataFrames but want the benefit of proper type-checking on them, I would recommend that you use [pandera](https://pandera.readthedocs.io/en/stable/).
 4) Update the classes serving.contract with your serving API
