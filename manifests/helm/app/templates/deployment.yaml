@@ -41,8 +41,6 @@ spec:
             secretKeyRef:
               name: aws-connection-my-storage
               key: AWS_S3_ENDPOINT
-        - name: MLFLOW_TRACKING_URI
-          value: http://mlflow.mlflow.svc.cluster.local:5000
         envFrom:
         - secretRef:
             name: aws-connection-my-storage
