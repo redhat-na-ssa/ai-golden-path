@@ -8,9 +8,8 @@ from time import time_ns
 from uvicorn import run
 
 from contract import Contract, ResponseContract, ModelMetadata
-from common import MODEL_VERSION
 from common.model_factory import load_active_models
-from common.transformations import preprocess, postprocess
+from common.transformations import infer
 
 def seed_by_time():
     # Seed the RNG at the start of the process by a combination of host IP and time to be unique across multiple instances.
@@ -55,17 +54,13 @@ def choose_request_model(models: Dict[str, Tuple[Sequence, Sequence]]) -> str:
 def predict(request: Contract) -> ResponseContract:
     data = DataFrame([request.model_dump()])
 
-    preprocessed_data = preprocess(data)
-
     models = load_active_models()
     model_id = choose_request_model(models)
     this_model = models[model_id]
     model = this_model[0]
     this_model_version = f"{this_model[1]['params.major_version']}.{this_model[1]['params.minor_version']}.{this_model[1]['params.micro_version']}"
 
-    predictions = model.predict(preprocessed_data)
-
-    results = postprocess(predictions)
+    results = infer(data, model)
 
     metadata = ModelMetadata(model_id=model_id,
                              model_version=this_model_version,

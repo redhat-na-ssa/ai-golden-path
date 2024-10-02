@@ -1,2 +1,3 @@
 pandas==2.2.2
 mlflow[extras]==2.16.2
+cachetools==5.5.0

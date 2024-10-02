@@ -16,3 +16,10 @@ def postprocess(data: DataFrame) -> DataFrame:
     # Any postprocessing that needs to happen when both training and serving goes here
 
     return transformed_data
+
+
+def infer(data: DataFrame, model):
+    preprocessed_data = preprocess(data)
+    predictions = model.predict(preprocessed_data)
+    results = postprocess(predictions)
+    return results

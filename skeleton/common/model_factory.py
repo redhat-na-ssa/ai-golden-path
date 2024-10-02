@@ -1,3 +1,4 @@
+from cachetools import TTLCache
 from pickle import dump, load
 from typing import Dict, Tuple, Sequence
 
@@ -9,8 +10,8 @@ from common.mlflow_api import (
 from common.model_status import ModelStatus
 from common import MODEL_VERSION
 
-_model_path = f"../models/model_{MODEL_VERSION}.pkl"
-_cached_model = None
+# The cache will default to 10 minutes, but you can change this as needed.
+_model_cache = TTLCache(maxsize=10, ttl=600)
 
 
 def new_model():
@@ -20,18 +21,24 @@ def new_model():
 def save_model(model):
     save_to_mlflow(model, MODEL_VERSION, experiment_name="{{ cookiecutter.project_name }}")
 
-# TODO: Use a TTL cache to determine when to reload the model, then run load_model() during the healthcheck
 def load_model():
-    global _cached_model
-    if _cached_model is not None:
-        return _cached_model
+    if "single_model" in _model_cache:
+        return _model_cache["single_model"]
 
     models = list_models(MODEL_VERSION, experiment_name="{{ cookiecutter.project_name }}", active_state=ModelStatus.Active)
+    model = models[0]
     
-    _cached_model = model
+    _model_cache["single_model"] = model
     return model
 
 
 def load_active_models() -> Dict[str, Tuple[Sequence, Sequence]]:
+    if "models" in _model_cache:
+        return _model_cache["models"]
+    
     models = list_models_with_metadata(MODEL_VERSION, experiment_name="{{ cookiecutter.project_name }}", active_state=ModelStatus.Active)
+    # Don't cache if no models are found since this is technically unhealthy.
+    if models:
+        _model_cache["models"] = models
+
     return models
