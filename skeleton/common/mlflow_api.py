@@ -297,12 +297,12 @@ def list_models(model_version: Union[str, Tuple[str, str, str]],
 
 
 def list_models_with_metadata(model_version: Union[str, Tuple[str, str, str]],
-                experiment_id: Optional[str] = None,
-                experiment_name: Optional[str] = None,
-                active_state: Optional[ModelStatus] = None,
-                submodel_name: Optional[str] = None,
-                extra_immutable_metadata: Dict[str, str] = {},
-                extra_mutable_metadata: Dict[str, float] = {}) -> Dict[str, Tuple[Sequence, Sequence]]:
+                              experiment_id: Optional[str] = None,
+                              experiment_name: Optional[str] = None,
+                              active_state: Optional[ModelStatus] = None,
+                              submodel_name: Optional[str] = None,
+                              extra_immutable_metadata: Dict[str, str] = {},
+                              extra_mutable_metadata: Dict[str, float] = {}) -> Dict[str, Tuple[Sequence, Sequence]]:
     """
     List models in MLFlow for the semantic versioning framework.
 
@@ -323,4 +323,8 @@ def list_models_with_metadata(model_version: Union[str, Tuple[str, str, str]],
         filepath = run.artifact_uri
         models[run.run_id] = (mlflow.sklearn.load_model(filepath), run)
 
+    # Guarantees that the models will be balanced when you read them.
+    new_test_fractions = _rebalance_test_fractions({key: x[1]["metrics.test_fraction"] for key, x in models.items()})
+    for run_id, model in models.items():
+        model[1]["metrics.test_fraction"] = new_test_fractions[run_id]
     return models

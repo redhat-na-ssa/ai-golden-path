@@ -1,5 +1,4 @@
 from cachetools import TTLCache
-from pickle import dump, load
 from typing import Dict, Tuple, Sequence
 
 from common.mlflow_api import (
