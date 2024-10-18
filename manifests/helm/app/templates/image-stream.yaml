@@ -3,8 +3,8 @@ apiVersion: image.openshift.io/v1
 kind: ImageStream
 metadata:
   labels:
-    app: {{ .Release.Name }}-serving
-  name: {{ .Release.Name }}-serving
+    app: ${{ values.image_name }}
+  name: ${{ values.image_name }}
   namespace: {{ .Release.Namespace }}
 spec: {}
 {{ end }}

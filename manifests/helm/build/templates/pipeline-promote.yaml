@@ -129,9 +129,9 @@ spec:
     - name: copy-image-latest
       params:
         - name: srcImageURL
-          value: 'docker://$(params.source-image):$(params.source-image-tag)'
+          value: 'docker://$(params.source-image)-serving:$(params.source-image-tag)'
         - name: destImageURL
-          value: 'docker://$(params.destination-image):latest'
+          value: 'docker://$(params.destination-image)-serving:latest'
         - name: srcTLSverify
           value: 'false'
         - name: destTLSverify
@@ -144,15 +144,6 @@ spec:
       workspaces:
         - name: images-url
           workspace: images-url
-    - name: imagestream-tag
-      taskRef:
-        kind: ClusterTask
-        name: openshift-client
-      runAfter:
-        - copy-image-latest
-      params:
-        - name: SCRIPT
-          value: "oc tag docker://$(params.source-image):$(params.source-image-tag) ${{ values.component_id }}-serving"
 
 {{- end }}
   workspaces:

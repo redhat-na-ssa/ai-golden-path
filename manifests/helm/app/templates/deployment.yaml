@@ -23,7 +23,7 @@ spec:
          {
            "from": {
              "kind": "ImageStreamTag", 
-             "name": "{{ .Release.Name }}", 
+             "name": "${{ values.image_name }}", 
              "namespace": "{{ .Release.Namespace }}" 
            },
            "fieldPath": "spec.template.spec.containers[?(@.name==\"{{ .Release.Name }}-app\")].image", 
