@@ -17,3 +17,6 @@ spec:
   to:
     kind: Service
     name: {{ .Release.Name }}-app
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
