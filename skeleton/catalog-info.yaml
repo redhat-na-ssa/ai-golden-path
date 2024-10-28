@@ -12,6 +12,7 @@ metadata:
     backstage.io/source-location: url:https://{{cookiecutter.host}}/{{cookiecutter.destination}}
     backstage.io/techdocs-ref: url:https://{{cookiecutter.host}}/{{cookiecutter.destination}}
     gitlab.com/project-slug: {{cookiecutter.destination}}
+    mlflow.org/experiment-name: {{cookiecutter.component_id}}
   tags:
     - python
     - ai
