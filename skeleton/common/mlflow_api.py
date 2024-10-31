@@ -267,6 +267,7 @@ def list_runs(model_version: Union[str, Tuple[str, str, str]],
 
 
 def list_models(model_version: Union[str, Tuple[str, str, str]],
+                mlflow_subpackage=None,
                 experiment_id: Optional[str] = None,
                 experiment_name: Optional[str] = None,
                 active_state: Optional[ModelStatus] = None,
@@ -278,6 +279,7 @@ def list_models(model_version: Union[str, Tuple[str, str, str]],
 
     Args:
         model_version (Union[str, Tuple[str, str, str]]): Semantic Version of the model. Can be handled as either a string or as a tuple of 3 numbers (major, minor, and micro version)
+        mlflow_subpackage: The mlflow package itself (normally imported) where you call "log_model". If none is provided, uses the general mlflow.pyfunc.
         experiment_id (Optional[str]): Experiment Id if known. Optional with the experiment name.
         experiment_name (Optional[str]): Experiment Name if known. Optional with the experiment id.
         active_state (Optional[ModelStatus]): Optional[ModelStatus]: Which production state to search and update.
@@ -289,14 +291,18 @@ def list_models(model_version: Union[str, Tuple[str, str, str]],
 
     models = []
 
+    if mlflow_subpackage is None:
+        mlflow_subpackage = mlflow.pyfunc
+
     for _, run in runs.iterrows():
         filepath = run.artifact_uri
-        models.append(mlflow.sklearn.load_model(filepath))
+        models.append(mlflow_subpackage.load_model(filepath))
 
     return models
 
 
 def list_models_with_metadata(model_version: Union[str, Tuple[str, str, str]],
+                              mlflow_subpackage=None,
                               experiment_id: Optional[str] = None,
                               experiment_name: Optional[str] = None,
                               active_state: Optional[ModelStatus] = None,
@@ -308,6 +314,7 @@ def list_models_with_metadata(model_version: Union[str, Tuple[str, str, str]],
 
     Args:
         model_version (Union[str, Tuple[str, str, str]]): Semantic Version of the model. Can be handled as either a string or as a tuple of 3 numbers (major, minor, and micro version)
+        mlflow_subpackage: The mlflow package itself (normally imported) where you call "log_model". If none is provided, uses the general mlflow.pyfunc.
         experiment_id (Optional[str]): Experiment Id if known. Optional with the experiment name.
         experiment_name (Optional[str]): Experiment Name if known. Optional with the experiment id.
         active_state (Optional[ModelStatus]): Optional[ModelStatus]: Which production state to search and update.
@@ -319,9 +326,12 @@ def list_models_with_metadata(model_version: Union[str, Tuple[str, str, str]],
 
     models = dict()
 
+    if mlflow_subpackage is None:
+        mlflow_subpackage = mlflow.pyfunc
+
     for _, run in runs.iterrows():
         filepath = run.artifact_uri
-        models[run.run_id] = (mlflow.sklearn.load_model(filepath), run)
+        models[run.run_id] = (mlflow_subpackage.load_model(filepath), run)
 
     # Guarantees that the models will be balanced when you read them.
     new_test_fractions = _rebalance_test_fractions({key: x[1]["metrics.test_fraction"] for key, x in models.items()})
