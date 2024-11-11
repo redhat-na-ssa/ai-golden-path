@@ -14,6 +14,8 @@ spec:
   steps:
     - image: $(params.IMAGE)
       name: run-test
+      script: |
+        python -m unittest discover ../common && python -m unittest
 ---
 apiVersion: tekton.dev/v1beta1
 kind: Pipeline
@@ -91,7 +93,7 @@ spec:
       - name: DOCKERFILE
         value: ./Containerfile-serving
       - name: BUILD_EXTRA_ARGS
-        value: --target=testing
+        value: --target=serving
       workspaces:
       - name: source
         workspace: source-folder
@@ -104,25 +106,27 @@ spec:
         value: $(params.output-image)-serving-tests
       runAfter:
       - package
-    - name: build-sign-image
-      runAfter:
-      - serving-unit-tests
+    - name: copy-image-latest
+      params:
+        - name: srcImageURL
+          value: 'docker://$(params.output-image)-serving-tests:latest'
+        - name: destImageURL
+          value: 'docker://$(params.output-image)-serving:latest'
+        - name: srcTLSverify
+          value: 'false'
+        - name: destTLSverify
+          value: 'false'
       taskRef:
         kind: ClusterTask
-        name: buildah
-      params:
-      - name: IMAGE
-        value: $(params.output-image)-serving
-      - name: DOCKERFILE
-        value: ./Containerfile-serving
-      - name: BUILD_EXTRA_ARGS
-        value: --target=serving
+        name: skopeo-copy
+      runAfter:
+        - serving-unit-tests
       workspaces:
-      - name: source
-        workspace: source-folder
+        - name: images-url
+          workspace: images-url
     - name: restart-dev
       runAfter:
-      - build-sign-image
+      - copy-image-latest
       taskRef:
         kind: ClusterTask
         name: openshift-client
@@ -130,10 +134,6 @@ spec:
         - name: SCRIPT
           value: "oc rollout restart deploy/{{ .Values.app.name }}-dev-app"
   results:
-    - name: IMAGE_URL
-      value: "$(tasks.build-sign-image.results.IMAGE_URL)"
-    - name: IMAGE_DIGEST
-      value: "$(tasks.build-sign-image.results.IMAGE_DIGEST)"
     - name: CHAINS-GIT_URL
       value: "$(tasks.git-clone.results.url)"
     - name: CHAINS-GIT_COMMIT
@@ -142,3 +142,4 @@ spec:
     - name: source-folder
     - name: docker-config
     - name: reports
+    - name: images-url

@@ -52,7 +52,7 @@ spec:
                   requests:
                     storage: 1Gi
           - emptyDir: {}
-            name: maven-settings
+            name: images-url
 {{- if eq .Values.image.registry "Quay" }}
           - name: docker-config
             secret:

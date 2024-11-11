@@ -5,17 +5,13 @@ COPY serving /app/serving
 
 WORKDIR /app/
 
+USER root
+RUN yum -y install mesa-libGL
 RUN pip install -r common/requirements.txt -r serving/requirements.txt
 
 USER 1001
 ENV PYTHONPATH=/app
 WORKDIR /app/serving
-
-
-FROM base as testing
-
-CMD python -m unittest discover ../common && python -m unittest
-
 
 FROM base AS serving
 
