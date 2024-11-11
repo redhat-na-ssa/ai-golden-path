@@ -158,6 +158,7 @@ spec:
         description: gitops resources for ${{ parameters.projectId }}
         sourcePath: ./tenant-gitops
         repoVisibility: public
+        defaultBranch: main
     - id: create-argocd-resources
       name: Create ArgoCD Resources
       action: argocd:create-resources
