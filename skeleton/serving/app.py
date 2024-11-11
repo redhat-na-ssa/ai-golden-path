@@ -8,7 +8,7 @@ from time import time_ns
 from uvicorn import run
 
 from contract import Contract, ResponseContract, ModelMetadata
-from common.model_factory import load_active_models
+from common.model_factory import invalidate_models, load_active_models
 from common.transformations import infer
 
 def seed_by_time():
@@ -48,6 +48,12 @@ def choose_request_model(models: Dict[str, Tuple[Sequence, Sequence]]) -> str:
         total_value += this_model_data[1]['metrics.test_fraction']
         if rng_value < total_value:
             return run_id
+
+
+@app.put("/reload_models")
+def reload_models() -> bool:
+    invalidate_models()
+    return True
 
 
 @app.post("/predict")

@@ -13,6 +13,12 @@ from common import MODEL_VERSION
 _model_cache = TTLCache(maxsize=10, ttl=600)
 
 
+def invalidate_models():
+    if "single_model" in _model_cache:
+        _model_cache.pop("single_model")
+    if "models" in _model_cache:
+        _model_cache.pop("models")
+
 def new_model():
     model = None  # Put your default model constructor here.
     return model
