@@ -76,11 +76,11 @@ spec:
       workspaces:
         - name: repository
           workspace: source-folder
-    - name: package
+    - name: package-serving
       runAfter:
         - verify-commit
 {{- else }}
-    - name: package
+    - name: package-serving
       runAfter:
         - git-clone
 {{- end }}
@@ -97,6 +97,29 @@ spec:
       workspaces:
       - name: source
         workspace: source-folder
+{{- if eq .Values.git.verify_commits "enabled" }}
+    - name: package-training
+      runAfter:
+        - verify-commit
+{{- else }}
+    - name: package-training
+      runAfter:
+        - git-clone
+{{- end }}
+      taskRef:
+        kind: ClusterTask
+        name: buildah
+      params:
+      - name: IMAGE
+        value: $(params.output-image)-training-tests
+      - name: DOCKERFILE
+        value: ./Containerfile-training
+      - name: BUILD_EXTRA_ARGS
+        value: --target=training
+      workspaces:
+      - name: source
+        workspace: source-folder
+
     - name: serving-unit-tests
       taskRef:
         kind: Task
@@ -105,8 +128,18 @@ spec:
       - name: IMAGE
         value: $(params.output-image)-serving-tests
       runAfter:
-      - package
-    - name: copy-image-latest
+      - package-serving
+    - name: training-unit-tests
+      taskRef:
+        kind: Task
+        name: run-container-tests
+      params:
+      - name: IMAGE
+        value: $(params.output-image)-training-tests
+      runAfter:
+      - package-training
+
+    - name: copy-serving-image-latest
       params:
         - name: srcImageURL
           value: 'docker://$(params.output-image)-serving-tests:latest'
@@ -121,12 +154,34 @@ spec:
         name: skopeo-copy
       runAfter:
         - serving-unit-tests
+        - training-unit-tests
       workspaces:
         - name: images-url
           workspace: images-url
+    - name: copy-training-image-latest
+      params:
+        - name: srcImageURL
+          value: 'docker://$(params.output-image)-training-tests:latest'
+        - name: destImageURL
+          value: 'docker://$(params.output-image)-training:latest'
+        - name: srcTLSverify
+          value: 'false'
+        - name: destTLSverify
+          value: 'false'
+      taskRef:
+        kind: ClusterTask
+        name: skopeo-copy
+      runAfter:
+        - serving-unit-tests
+        - training-unit-tests
+      workspaces:
+        - name: images-url
+          workspace: images-url
+
     - name: restart-dev
       runAfter:
-      - copy-image-latest
+      - copy-serving-image-latest
+      - copy-training-image-latest
       taskRef:
         kind: ClusterTask
         name: openshift-client
