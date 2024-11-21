@@ -42,4 +42,18 @@ spec:
   lifecycle: production
   owner: {{cookiecutter.owner}}
   definition:
-    $text: ''
+    $text: https://{{cookiecutter.component_id}}-app-{{cookiecutter.component_id}}/{{cookiecutter.host}}/openapi.json
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: {{cookiecutter.component_id}}-dev
+  {%- if cookiecutter.project_description %}
+  description: {{cookiecutter.project_description}}
+  {%- endif %}
+spec:
+  type: openapi
+  lifecycle: experimental
+  owner: {{cookiecutter.owner}}
+  definition:
+    $text: https://{{cookiecutter.component_id}}-dev-app-{{cookiecutter.component_id}}-dev/{{cookiecutter.host}}/openapi.json

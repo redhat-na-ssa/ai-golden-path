@@ -114,6 +114,9 @@ spec:
         repoUrl: ${{ parameters.repo.host }}?owner=${{ parameters.repo.owner }}&repo=${{ parameters.projectId }}
         repoVisibility: public
         defaultBranch: main
+        branches:
+          name: main
+          protect: true
 
     - id: register
       name: Register
@@ -159,6 +162,9 @@ spec:
         sourcePath: ./tenant-gitops
         repoVisibility: public
         defaultBranch: main
+        branches:
+          name: main
+          protect: true
     - id: create-argocd-resources
       name: Create ArgoCD Resources
       action: argocd:create-resources
