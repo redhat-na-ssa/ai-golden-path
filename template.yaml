@@ -118,13 +118,6 @@ spec:
           name: main
           protect: true
 
-    - id: register
-      name: Register
-      action: catalog:register
-      input:
-        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
-        catalogInfoPath: "/catalog-info.yaml"
-
     - id: template-gitops-deployment
       name: Generating Deployment Resources
       action: fetch:template
@@ -174,6 +167,12 @@ spec:
         namespace: janus-argocd
         repoUrl: https://${{ parameters.repo.host }}/${{ parameters.repo.owner }}/${{ parameters.projectId }}-gitops.git
         path: argocd/
+    - id: register
+      name: Register
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+        catalogInfoPath: "/catalog-info.yaml"
   output:
     links:
       - title: Source Code Repository
