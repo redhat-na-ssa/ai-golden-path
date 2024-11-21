@@ -115,8 +115,8 @@ spec:
         repoVisibility: public
         defaultBranch: main
         branches:
-          name: main
-          protect: true
+          - name: main
+            protect: true
 
     - id: template-gitops-deployment
       name: Generating Deployment Resources
@@ -156,8 +156,8 @@ spec:
         repoVisibility: public
         defaultBranch: main
         branches:
-          name: main
-          protect: true
+          - name: main
+            protect: true
     - id: create-argocd-resources
       name: Create ArgoCD Resources
       action: argocd:create-resources
