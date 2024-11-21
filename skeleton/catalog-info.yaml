@@ -42,7 +42,7 @@ spec:
   lifecycle: production
   owner: {{cookiecutter.owner}}
   definition:
-    $text: https://{{cookiecutter.component_id}}-app-{{cookiecutter.component_id}}/{{cookiecutter.host}}/openapi.json
+    $text: https://{{cookiecutter.component_id}}-prod-app-{{cookiecutter.component_id}}-prod/{{cookiecutter.host}}/openapi.json
 ---
 apiVersion: backstage.io/v1alpha1
 kind: API
