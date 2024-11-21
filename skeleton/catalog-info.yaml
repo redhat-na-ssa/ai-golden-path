@@ -56,4 +56,4 @@ spec:
   lifecycle: experimental
   owner: {{cookiecutter.owner}}
   definition:
-    $text: https://{{cookiecutter.component_id}}-dev-app-{{cookiecutter.component_id}}-dev/{{cookiecutter.cluster}}/openapi.json
+    $text: https://{{cookiecutter.component_id}}-dev-app-{{cookiecutter.component_id}}-dev{{cookiecutter.cluster}}/openapi.json
