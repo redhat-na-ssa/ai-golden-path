@@ -115,12 +115,12 @@ data:
       - name: Get registry-admin token
         shell: |
           oc get secret $(oc get secret -n {{ "{{" }} component_id {{ "}}" }}-dev | grep registry-admin-token | awk '{print $1}') \
-          -n {{ "{{" }} component_id {{ "}}" }}-dev -o json | jq -r .data.token | base64 --decode
+          -n {{ "{{" }} component_id {{ "}}" }}-dev -o json | jq -r .data.rox_api_token | base64 --decode
         register: r_token
 
       - name: Token
         set_fact:
-          _token: "{{ "{{" }} r_token.stdout {{ "}}" }}"
+          _token: "{{ "{{" }} r_token {{ "}}" }}"
 
       - name: Stackrox internal registry integration
         uri:
