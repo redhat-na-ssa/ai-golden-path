@@ -112,6 +112,16 @@ data:
 
 {{- if ne .Values.image.registry "Quay" }}
 
+      - name: Get registry-admin token
+        shell: |
+          oc get secret $(oc get secret -n {{ "{{" }} component_id {{ "}}" }}-dev | grep registry-admin-token | awk '{print $1}') \
+          -n {{ "{{" }} component_id {{ "}}" }}-dev -o json | jq -r .data.token | base64 --decode
+        register: r_token
+
+      - name: Token
+        set_fact:
+          _token: "{{ "{{" }} r_token {{ "}}" }}"
+
       - name: Stackrox internal registry integration
         uri:
           url: "{{ "{{" }} central_stackrox_url {{ "}}" }}/v1/imageintegrations"
@@ -130,6 +140,8 @@ data:
             "categories": ["REGISTRY"],
             "docker": {
             "endpoint": "default-route-openshift-image-registry{{ "{{" }} apps_domain {{ "}}" }}",
+            "username": "registry-admin",
+            "password": "{{ "{{" }} _token {{ "}}" }}",
             "insecure": true
             },
             "skipTestIntegration": false
