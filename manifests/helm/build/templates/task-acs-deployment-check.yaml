@@ -39,7 +39,7 @@ spec:
     - default: common-password-secret
       name: common_password_secret
       type: string
-    - default: master
+    - default: main
       name: git_repository_revision
       type: string
     - default: 'true'
