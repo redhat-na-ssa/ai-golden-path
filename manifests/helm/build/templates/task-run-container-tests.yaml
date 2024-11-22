@@ -1,0 +1,18 @@
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: run-container-tests
+  labels:
+    type: task
+    backstage.io/kubernetes-id: {{ .Values.app.name }}
+spec:
+  description: Run unit tests from a container image
+  params:
+    - description: Reference of the image to use.
+      name: IMAGE
+      type: string
+  steps:
+    - image: $(params.IMAGE)
+      name: run-test
+      script: |
+        python -m unittest discover ../common && python -m unittest
