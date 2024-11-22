@@ -36,6 +36,8 @@ spec:
             value: {{ .Values.git.org }}
           - name: component-id
             value: {{ .Values.app.name }}
+          - name: common-password-secret
+            value: common-password-secret
           - name: stackrox-endpoint
             value: central-stackrox{{ .Values.app.cluster }}:443
           - name: stackrox-secret
