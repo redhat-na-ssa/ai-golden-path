@@ -25,6 +25,8 @@ spec:
       type: string
     - name: component-id
       type: string
+    - name: common_password_secret
+      type: string
     - name: stackrox-endpoint
       type: string
     - name: stackrox-secret
