@@ -1,0 +1,42 @@
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: train
+  labels:
+    type: task
+    backstage.io/kubernetes-id: {{ .Values.app.name }}
+spec:
+  description: Run the training job
+  steps:
+    - image: docker://{{ include "image.dev-url" . }}-training:latest
+      name: train
+---
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: evaluate
+  labels:
+    type: task
+    backstage.io/kubernetes-id: {{ .Values.app.name }}
+spec:
+  description: Run the evaluation job
+  steps:
+    - image: docker://{{ include "image.dev-url" . }}-evaluation:latest
+      name: evaluate
+---
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: train-and-evaluate
+spec:
+  tasks:
+    - name: train
+      taskRef:
+        name: train
+        kind: Task
+    - name: evaluate
+      taskRef:
+        name: evaluate
+        kind: Task
+      runAfter:
+        - train

@@ -15,4 +15,4 @@ WORKDIR /app/training
 
 FROM base AS training
 
-CMD python app.py
+CMD ["python", "app.py"]

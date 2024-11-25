@@ -15,4 +15,4 @@ WORKDIR /app/evaluation
 
 FROM base AS evaluation
 
-CMD python app.py
+CMD ["python", "app.py"]

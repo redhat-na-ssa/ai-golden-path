@@ -1,0 +1,17 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: trigger-backup-pipeline
+spec:
+  schedule: '0 12 * * *'
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: pipeline-trigger
+              image: curlimages/curl
+              command: ['/bin/sh', '-c']
+              # yamllint disable-line rule:line-length rule:quoted-strings
+              args: ["curl --header \"Content-Type: application/json\" el-cron-listener.default.svc.cluster.local:8080"]
+          restartPolicy: Never

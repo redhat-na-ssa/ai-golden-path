@@ -1,0 +1,15 @@
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: TriggerTemplate
+metadata:
+  name: cron-template-training
+spec:
+  resourcetemplates:
+    - apiVersion: tekton.dev/v1beta1
+      kind: PipelineRun
+      metadata:
+        generateName: job-
+        labels:
+          tekton.dev/pipeline: cron-job
+      spec:
+        pipelineRef:
+          name: train-and-evaluate
