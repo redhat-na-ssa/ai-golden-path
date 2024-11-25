@@ -119,6 +119,28 @@ spec:
       workspaces:
       - name: source
         workspace: source-folder
+{{- if eq .Values.git.verify_commits "enabled" }}
+    - name: package-evaluation
+      runAfter:
+        - verify-commit
+{{- else }}
+    - name: package-evaluation
+      runAfter:
+        - git-clone
+{{- end }}
+      taskRef:
+        kind: ClusterTask
+        name: buildah
+      params:
+      - name: IMAGE
+        value: $(params.output-image)-evaluation-tests
+      - name: DOCKERFILE
+        value: ./Containerfile-evaluation
+      - name: BUILD_EXTRA_ARGS
+        value: --target=evaluation
+      workspaces:
+      - name: source
+        workspace: source-folder
 
     - name: serving-unit-tests
       taskRef:
@@ -138,6 +160,15 @@ spec:
         value: $(params.output-image)-training-tests
       runAfter:
       - package-training
+    - name: evaluation-unit-tests
+      taskRef:
+        kind: Task
+        name: run-container-tests
+      params:
+      - name: IMAGE
+        value: $(params.output-image)-evaluation-tests
+      runAfter:
+      - package-evaluation
 
     - name: copy-serving-image-latest
       params:
@@ -155,6 +186,7 @@ spec:
       runAfter:
         - serving-unit-tests
         - training-unit-tests
+        - evaluation-unit-tests
       workspaces:
         - name: images-url
           workspace: images-url
@@ -174,6 +206,27 @@ spec:
       runAfter:
         - serving-unit-tests
         - training-unit-tests
+        - evaluation-unit-tests
+      workspaces:
+        - name: images-url
+          workspace: images-url
+    - name: copy-evaluation-image-latest
+      params:
+        - name: srcImageURL
+          value: 'docker://$(params.output-image)-evaluation-tests:latest'
+        - name: destImageURL
+          value: 'docker://$(params.output-image)-evaluation:latest'
+        - name: srcTLSverify
+          value: 'false'
+        - name: destTLSverify
+          value: 'false'
+      taskRef:
+        kind: ClusterTask
+        name: skopeo-copy
+      runAfter:
+        - serving-unit-tests
+        - training-unit-tests
+        - evaluation-unit-tests
       workspaces:
         - name: images-url
           workspace: images-url
@@ -182,6 +235,7 @@ spec:
       runAfter:
       - copy-serving-image-latest
       - copy-training-image-latest
+      - copy-evaluation-image-latest
       taskRef:
         kind: ClusterTask
         name: openshift-client

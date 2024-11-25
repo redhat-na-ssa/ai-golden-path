@@ -266,6 +266,12 @@ def list_runs(model_version: Union[str, Tuple[str, str, str]],
     return runs
 
 
+def load_single_model(run: Series,
+                      mlflow_subpackage=None) -> Any:
+    filepath = run.artifact_uri
+    return mlflow_subpackage.load_model(filepath)
+
+
 def list_models(model_version: Union[str, Tuple[str, str, str]],
                 mlflow_subpackage=None,
                 experiment_id: Optional[str] = None,
@@ -295,8 +301,7 @@ def list_models(model_version: Union[str, Tuple[str, str, str]],
         mlflow_subpackage = mlflow.pyfunc
 
     for _, run in runs.iterrows():
-        filepath = run.artifact_uri
-        models.append(mlflow_subpackage.load_model(filepath))
+        models.append(load_single_model(run, mlflow_subpackage))
 
     return models
 
@@ -330,8 +335,7 @@ def list_models_with_metadata(model_version: Union[str, Tuple[str, str, str]],
         mlflow_subpackage = mlflow.pyfunc
 
     for _, run in runs.iterrows():
-        filepath = run.artifact_uri
-        models[run.run_id] = (mlflow_subpackage.load_model(filepath), run)
+        models[run.run_id] = (load_single_model(run, mlflow_subpackage), run)
 
     # Guarantees that the models will be balanced when you read them.
     new_test_fractions = _rebalance_test_fractions({key: x[1]["metrics.test_fraction"] for key, x in models.items()})
