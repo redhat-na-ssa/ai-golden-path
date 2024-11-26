@@ -124,7 +124,7 @@ spec:
       - name: rox_api_token
         value: $(params.stackrox-secret)
       - name: image
-        value: {{ include "sha-image.dev-url" . }}
+        value: {{ include "sha-image.dev-url" . }}-serving-tests
       - name: insecure-skip-tls-verify
         value: "true"
       - name: image_digest
@@ -144,7 +144,7 @@ spec:
       - name: rox_api_token
         value: $(params.stackrox-secret)
       - name: image
-        value: {{ include "sha-image.dev-url" . }}
+        value: {{ include "sha-image.dev-url" . }}-serving-tests
       - name: insecure-skip-tls-verify
         value: "true"
       - name: image_digest
@@ -189,7 +189,7 @@ spec:
       - name: rox_api_token
         value: $(params.stackrox-secret)
       - name: image
-        value: {{ include "sha-image.dev-url" . }}
+        value: {{ include "sha-image.dev-url" . }}-training-tests
       - name: insecure-skip-tls-verify
         value: "true"
       - name: image_digest
@@ -209,7 +209,7 @@ spec:
       - name: rox_api_token
         value: $(params.stackrox-secret)
       - name: image
-        value: {{ include "sha-image.dev-url" . }}
+        value: {{ include "sha-image.dev-url" . }}-training-tests
       - name: insecure-skip-tls-verify
         value: "true"
       - name: image_digest
