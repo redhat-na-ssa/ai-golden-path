@@ -6,7 +6,5 @@ spec:
   serviceAccountName: pipeline
   triggers:
     - name: cron-trigger-training
-      bindings:
-        - ref: cron-binding-training
       template:
         ref: cron-template-training
