@@ -120,7 +120,7 @@ data:
 
       - name: Token
         set_fact:
-          _token: "{{ "{{" }} r_token {{ "}}" }}"
+          _token: "{{ "{{" }} r_token.stdout {{ "}}" }}"
 
       - name: Stackrox internal registry integration
         uri:
