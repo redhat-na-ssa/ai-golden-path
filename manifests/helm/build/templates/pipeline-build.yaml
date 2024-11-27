@@ -1,22 +1,3 @@
-apiVersion: tekton.dev/v1
-kind: Task
-metadata:
-  name: run-container-tests
-  labels:
-    type: task
-    backstage.io/kubernetes-id: {{ .Values.app.name }}
-spec:
-  description: Run unit tests from a container image
-  params:
-    - description: Reference of the image to use.
-      name: IMAGE
-      type: string
-  steps:
-    - image: $(params.IMAGE)
-      name: run-test
-      script: |
-        python -m unittest discover ../common && python -m unittest
----
 apiVersion: tekton.dev/v1beta1
 kind: Pipeline
 metadata:
@@ -43,6 +24,12 @@ spec:
     - name: git-owner
       type: string
     - name: component-id
+      type: string
+    - name: common-password-secret
+      type: string
+    - name: stackrox-endpoint
+      type: string
+    - name: stackrox-secret
       type: string
   tasks:
     - name: git-clone
@@ -170,6 +157,201 @@ spec:
       runAfter:
       - package-evaluation
 
+    - name: acs-image-check-serving
+      params:
+      - name: rox_central_endpoint
+        value: $(params.stackrox-endpoint)
+      - name: rox_api_token
+        value: $(params.stackrox-secret)
+      - name: image
+        value: {{ include "sha-image.dev-url" . }}-serving-tests
+      - name: insecure-skip-tls-verify
+        value: "true"
+      - name: image_digest
+        value: $(tasks.package-serving.results.IMAGE_DIGEST)
+      runAfter:
+      - package-serving
+      taskRef:
+        kind: Task
+        name: acs-image-check
+      workspaces:
+      - name: reports
+        workspace: reports
+    - name: acs-image-scan-serving
+      params:
+      - name: rox_central_endpoint
+        value: $(params.stackrox-endpoint)
+      - name: rox_api_token
+        value: $(params.stackrox-secret)
+      - name: image
+        value: {{ include "sha-image.dev-url" . }}-serving-tests
+      - name: insecure-skip-tls-verify
+        value: "true"
+      - name: image_digest
+        value: $(tasks.package-serving.results.IMAGE_DIGEST)
+      runAfter:
+      - package-serving
+      taskRef:
+        kind: Task
+        name: acs-image-scan
+      workspaces:
+      - name: reports
+        workspace: reports
+    - name: acs-deploy-check-serving
+      params:
+      - name: rox_central_endpoint
+        value: $(params.stackrox-endpoint)
+      - name: rox_api_token
+        value: $(params.stackrox-secret)
+      - name: git_host
+        value: $(params.git-host)
+      - name: git_owner
+        value: $(params.git-owner)
+      - name: component_id
+        value: $(params.component-id)
+      - name: common_password_secret
+        value: $(params.common-password-secret)
+      - name: insecure-skip-tls-verify
+        value: "true"
+      taskRef:
+        kind: Task
+        name: acs-deploy-check
+      runAfter:
+      - package-serving
+      workspaces:
+      - name: reports
+        workspace: reports
+
+    - name: acs-image-check-training
+      params:
+      - name: rox_central_endpoint
+        value: $(params.stackrox-endpoint)
+      - name: rox_api_token
+        value: $(params.stackrox-secret)
+      - name: image
+        value: {{ include "sha-image.dev-url" . }}-training-tests
+      - name: insecure-skip-tls-verify
+        value: "true"
+      - name: image_digest
+        value: $(tasks.package-training.results.IMAGE_DIGEST)
+      runAfter:
+      - package-training
+      taskRef:
+        kind: Task
+        name: acs-image-check
+      workspaces:
+      - name: reports
+        workspace: reports
+    - name: acs-image-scan-training
+      params:
+      - name: rox_central_endpoint
+        value: $(params.stackrox-endpoint)
+      - name: rox_api_token
+        value: $(params.stackrox-secret)
+      - name: image
+        value: {{ include "sha-image.dev-url" . }}-training-tests
+      - name: insecure-skip-tls-verify
+        value: "true"
+      - name: image_digest
+        value: $(tasks.package-training.results.IMAGE_DIGEST)
+      runAfter:
+      - package-training
+      taskRef:
+        kind: Task
+        name: acs-image-scan
+      workspaces:
+      - name: reports
+        workspace: reports
+    - name: acs-deploy-check-training
+      params:
+      - name: rox_central_endpoint
+        value: $(params.stackrox-endpoint)
+      - name: rox_api_token
+        value: $(params.stackrox-secret)
+      - name: git_host
+        value: $(params.git-host)
+      - name: git_owner
+        value: $(params.git-owner)
+      - name: component_id
+        value: $(params.component-id)
+      - name: common_password_secret
+        value: $(params.common-password-secret)
+      - name: insecure-skip-tls-verify
+        value: "true"
+      taskRef:
+        kind: Task
+        name: acs-deploy-check
+      runAfter:
+      - package-training
+      workspaces:
+      - name: reports
+        workspace: reports
+
+    - name: acs-image-check-evaluation
+      params:
+      - name: rox_central_endpoint
+        value: $(params.stackrox-endpoint)
+      - name: rox_api_token
+        value: $(params.stackrox-secret)
+      - name: image
+        value: {{ include "sha-image.dev-url" . }}-evaluation-tests
+      - name: insecure-skip-tls-verify
+        value: "true"
+      - name: image_digest
+        value: $(tasks.package-evaluation.results.IMAGE_DIGEST)
+      runAfter:
+      - package-evaluation
+      taskRef:
+        kind: Task
+        name: acs-image-check
+      workspaces:
+      - name: reports
+        workspace: reports
+    - name: acs-image-scan-evaluation
+      params:
+      - name: rox_central_endpoint
+        value: $(params.stackrox-endpoint)
+      - name: rox_api_token
+        value: $(params.stackrox-secret)
+      - name: image
+        value: {{ include "sha-image.dev-url" . }}-evaluation-tests
+      - name: insecure-skip-tls-verify
+        value: "true"
+      - name: image_digest
+        value: $(tasks.package-evaluation.results.IMAGE_DIGEST)
+      runAfter:
+      - package-evaluation
+      taskRef:
+        kind: Task
+        name: acs-image-scan
+      workspaces:
+      - name: reports
+        workspace: reports
+    - name: acs-deploy-check-evaluation
+      params:
+      - name: rox_central_endpoint
+        value: $(params.stackrox-endpoint)
+      - name: rox_api_token
+        value: $(params.stackrox-secret)
+      - name: git_host
+        value: $(params.git-host)
+      - name: git_owner
+        value: $(params.git-owner)
+      - name: component_id
+        value: $(params.component-id)
+      - name: common_password_secret
+        value: $(params.common-password-secret)
+      - name: insecure-skip-tls-verify
+        value: "true"
+      taskRef:
+        kind: Task
+        name: acs-deploy-check
+      runAfter:
+      - package-evaluation
+      workspaces:
+      - name: reports
+        workspace: reports
+
     - name: copy-serving-image-latest
       params:
         - name: srcImageURL
@@ -187,6 +369,15 @@ spec:
         - serving-unit-tests
         - training-unit-tests
         - evaluation-unit-tests
+        - acs-image-check-serving
+        - acs-image-scan-serving
+        - acs-deploy-check-serving
+        - acs-image-check-training
+        - acs-image-scan-training
+        - acs-deploy-check-training
+        - acs-image-check-evaluation
+        - acs-image-scan-evaluation
+        - acs-deploy-check-evaluation
       workspaces:
         - name: images-url
           workspace: images-url
@@ -207,6 +398,15 @@ spec:
         - serving-unit-tests
         - training-unit-tests
         - evaluation-unit-tests
+        - acs-image-check-serving
+        - acs-image-scan-serving
+        - acs-deploy-check-serving
+        - acs-image-check-training
+        - acs-image-scan-training
+        - acs-deploy-check-training
+        - acs-image-check-evaluation
+        - acs-image-scan-evaluation
+        - acs-deploy-check-evaluation
       workspaces:
         - name: images-url
           workspace: images-url
@@ -227,6 +427,15 @@ spec:
         - serving-unit-tests
         - training-unit-tests
         - evaluation-unit-tests
+        - acs-image-check-serving
+        - acs-image-scan-serving
+        - acs-deploy-check-serving
+        - acs-image-check-training
+        - acs-image-scan-training
+        - acs-deploy-check-training
+        - acs-image-check-evaluation
+        - acs-image-scan-evaluation
+        - acs-deploy-check-evaluation
       workspaces:
         - name: images-url
           workspace: images-url
