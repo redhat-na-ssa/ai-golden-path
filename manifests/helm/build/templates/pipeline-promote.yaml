@@ -144,7 +144,7 @@ spec:
       workspaces:
         - name: images-url
           workspace: images-url
-    - name: restart-dev
+    - name: restart-prod
       runAfter:
       - copy-image-latest
       taskRef:
@@ -152,7 +152,7 @@ spec:
         name: openshift-client
       params:
         - name: SCRIPT
-          value: "oc rollout restart deploy/{{ .Values.app.name }}-app"
+          value: "oc rollout restart -n {{ .Values.app.name }}-prod deploy/{{ .Values.app.name }}-app"
 
 {{- end }}
   workspaces:
