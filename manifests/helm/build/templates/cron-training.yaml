@@ -13,5 +13,5 @@ spec:
               image: curlimages/curl
               command: ['/bin/sh', '-c']
               # yamllint disable-line rule:line-length rule:quoted-strings
-              args: ["curl --header \"Content-Type: application/json\" el-cron-listener.default.svc.cluster.local:8080"]
+              args: ["curl --header \"Content-Type: application/json\" event-listener-training:8080"]
           restartPolicy: Never
