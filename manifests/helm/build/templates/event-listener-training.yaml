@@ -1,0 +1,10 @@
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: EventListener
+metadata:
+  name: event-listener-training
+spec:
+  serviceAccountName: pipeline
+  triggers:
+    - name: cron-trigger-training
+      template:
+        ref: cron-template-training

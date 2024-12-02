@@ -1,18 +1,18 @@
 FROM registry.access.redhat.com/ubi9/python-311:latest as base
 
 COPY common /app/common
-COPY training /app/training
+COPY evaluation /app/evaluation
 
 WORKDIR /app/
 
 USER root
 RUN yum -y install mesa-libGL
-RUN pip install -r common/requirements.txt -r training/requirements.txt
+RUN pip install -r common/requirements.txt -r evaluation/requirements.txt
 
 USER 1001
 ENV PYTHONPATH=/app
-WORKDIR /app/training
+WORKDIR /app/evaluation
 
-FROM base AS training
+FROM base AS evaluation
 
 CMD ["python", "app.py"]

@@ -1,0 +1,66 @@
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: train
+  labels:
+    type: task
+    backstage.io/kubernetes-id: {{ .Values.app.name }}
+spec:
+  description: Run the training job
+  steps:
+    - image: {{ include "image.dev-url" . }}-training:latest
+      name: train
+      env:
+      - name: MLFLOW_TRACKING_URI
+        value: 'http://mlflow.mlflow.svc.cluster.local:5000'
+      - name: MLFLOW_S3_ENDPOINT_URL
+        valueFrom:
+          secretKeyRef:
+            name: aws-connection-my-storage
+            key: AWS_S3_ENDPOINT
+      imagePullPolicy: Always
+      envFrom:
+      - secretRef:
+          name: aws-connection-my-storage
+---
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: evaluate
+  labels:
+    type: task
+    backstage.io/kubernetes-id: {{ .Values.app.name }}
+spec:
+  description: Run the evaluation job
+  steps:
+    - image: {{ include "image.dev-url" . }}-evaluation:latest
+      name: evaluate
+      env:
+      - name: MLFLOW_TRACKING_URI
+        value: 'http://mlflow.mlflow.svc.cluster.local:5000'
+      - name: MLFLOW_S3_ENDPOINT_URL
+        valueFrom:
+          secretKeyRef:
+            name: aws-connection-my-storage
+            key: AWS_S3_ENDPOINT
+      imagePullPolicy: Always
+      envFrom:
+      - secretRef:
+          name: aws-connection-my-storage
+---
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: train-and-evaluate
+spec:
+  tasks:
+    - name: train
+      taskRef:
+        name: train
+        kind: Task
+    - name: evaluate
+      taskRef:
+        name: evaluate
+        kind: Task
+      runAfter:
+        - train
