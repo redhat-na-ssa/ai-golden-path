@@ -2,3 +2,4 @@ pandas==2.2.2
 mlflow[extras]==2.16.2
 cachetools==5.5.0
 sklearn==1.5.2
+kubernetes==31.0.0

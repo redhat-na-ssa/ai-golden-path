@@ -25,6 +25,14 @@ spec:
             title: Project Description
             type: string
             description: Description of the AI Project
+          useServingRuntime:
+            title: Use Serving Runtime
+            type: string
+            description: Description of the AI Project
+            default: 'False'
+            enum:
+              - 'True'
+              - 'False'
     - title: Provide Cluster And Image Registry Information
       required:
         - host
@@ -107,6 +115,7 @@ spec:
           destination: ${{ parameters.repo.owner }}/${{ parameters.projectId }}
           port: 8080
           verify_commits: ${{ parameters.repo.verify_commits }}
+          use_serving_runtime: ${{ parameters.useServingRuntime }}
     - id: publish
       name: Publish
       action: publish:gitlab
