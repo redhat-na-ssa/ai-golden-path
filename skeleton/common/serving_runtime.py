@@ -7,7 +7,6 @@ kind: InferenceService
 metadata:
   annotations:
     serving.kserve.io/deploymentMode: ModelMesh
-  namespace: {{ cookiecutter.project_name }}
   labels:
     opendatahub.io/dashboard: 'true'
 spec:
