@@ -1,4 +1,7 @@
 from pandas import DataFrame
+from typing import Optional, Any
+
+from common.serving_runtime import predict
 
 
 # Be very careful - the data contracts for these functions are overly flexible.
@@ -18,8 +21,11 @@ def postprocess(data: DataFrame) -> DataFrame:
     return transformed_data
 
 
-def infer(data: DataFrame, model):
+def infer(data: DataFrame, model: Optional[Any], unique_id: Optional[str] = None):
     preprocessed_data = preprocess(data)
-    predictions = model.predict(preprocessed_data)
+    if model:
+        predictions = model.predict(preprocessed_data)
+    else:
+        predictions = predict(data, unique_id)
     results = postprocess(predictions)
     return results

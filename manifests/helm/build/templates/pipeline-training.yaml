@@ -30,6 +30,7 @@ metadata:
   labels:
     type: task
     backstage.io/kubernetes-id: {{ .Values.app.name }}
+serviceAccountName: model-controller
 spec:
   description: Run the evaluation job
   steps:

@@ -115,7 +115,6 @@ spec:
           destination: ${{ parameters.repo.owner }}/${{ parameters.projectId }}
           port: 8080
           verify_commits: ${{ parameters.repo.verify_commits }}
-          use_serving_runtime: ${{ parameters.useServingRuntime }}
     - id: publish
       name: Publish
       action: publish:gitlab
@@ -150,6 +149,7 @@ spec:
           deployment_name: ai-template
           user: ${{ user.entity.metadata.name }}
           verify_commits: ${{ parameters.repo.verify_commits }}
+          use_serving_runtime: ${{ parameters.useServingRuntime }}
         targetPath: ./tenant-gitops
     - id: publish-gitops
       name: Publishing to Resource Repository

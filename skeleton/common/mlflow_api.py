@@ -105,7 +105,7 @@ def enable_run(run_id: str,
     """
     change_status(run_id, ModelStatus.Active, 1.0)
     if use_serving_runtime:
-        add_model(f"{MODEL_NAME}-{run_id}", model_path)
+        add_model(run_id, model_path)
 
 
 
@@ -120,7 +120,7 @@ def disable_run(run_id: str,
     """
     change_status(run_id, ModelStatus.Disabled, 0.0)
     if use_serving_runtime:
-        remove_model(f"{MODEL_NAME}-{run_id}")
+        remove_model(run_id)
 
 
 def canary_run(run_id: str,
@@ -135,7 +135,7 @@ def canary_run(run_id: str,
     """
     change_status(run_id, ModelStatus.Canary, 0.0)
     if use_serving_runtime:
-        add_model(f"{MODEL_NAME}-{run_id}", model_path)
+        add_model(run_id, model_path)
 
 
 def _rebalance_test_fractions(test_fraction_by_run: Dict[str, float]) -> Dict[str, float]:
@@ -191,7 +191,7 @@ def update_active_runs(test_fraction_by_run: Dict[str, float],
         else:
             change_status(run_to_update, ModelStatus.Active, test_fraction_by_run[run_to_update])
             if use_serving_runtime:
-                add_model(f"{MODEL_NAME}-{run_to_update.run_id}", run_to_update.artifact_uri)
+                add_model(run_to_update.run_id, run_to_update.artifact_uri)
 
 
 
@@ -235,7 +235,7 @@ def change_test_fractions(test_fraction_by_run: Dict[str, float],
         else:
             change_status(run_to_update, ModelStatus(run_dict[run_to_update]['metrics.active_state']), test_fraction_by_run[run_to_update])
             if use_serving_runtime:
-                add_model(f"{MODEL_NAME}-{run_to_update.run_id}", run_to_update.artifact_uri)
+                add_model(run_to_update.run_id, run_to_update.artifact_uri)
 
 
 def list_runs(model_version: Union[str, Tuple[str, str, str]],

@@ -1,5 +1,5 @@
 from cachetools import TTLCache
-from typing import Dict, Tuple, Sequence
+from typing import Dict, Tuple, Sequence, Union
 
 from common.mlflow_api import (
     save_model as save_to_mlflow,
@@ -7,10 +7,10 @@ from common.mlflow_api import (
     list_models_with_metadata
 )
 from common.model_status import ModelStatus
-from common import MODEL_NAME, MODEL_VERSION
+from common import MODEL_NAME, MODEL_VERSION, USE_SERVING_RUNTIME, CACHE_TTL
 
 # The cache will default to 10 minutes, but you can change this as needed.
-_model_cache = TTLCache(maxsize=10, ttl=600)
+_model_cache = TTLCache(maxsize=10, ttl=CACHE_TTL)
 
 
 def invalidate_models():
@@ -37,7 +37,7 @@ def load_model():
     return model
 
 
-def load_active_models() -> Dict[str, Tuple[Sequence, Sequence]]:
+def load_active_models() -> Dict[str, Union[Sequence, Tuple[Sequence, Sequence]]]:
     if "models" in _model_cache:
         return _model_cache["models"]
     
@@ -47,3 +47,9 @@ def load_active_models() -> Dict[str, Tuple[Sequence, Sequence]]:
         _model_cache["models"] = models
 
     return models
+
+
+def get_model_metadata(model_data: Union[Sequence, Tuple[Sequence, Sequence]]) -> Sequence:
+    if USE_SERVING_RUNTIME:
+        return model_data['metrics.test_fraction']
+    return model_data[1]['metrics.test_fraction']

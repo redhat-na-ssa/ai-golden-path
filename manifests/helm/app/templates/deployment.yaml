@@ -34,6 +34,14 @@ spec:
     spec:
       containers:
       - env:
+        - name: USE_SERVING_RUNTIME
+          value: {{ .Values.useServingRuntime }}
+        - name: ENVIRONMENT
+{{- if .Values.isProd }}
+          value: prod
+{{- else }}
+          value: dev
+{{- end }}
         - name: MLFLOW_TRACKING_URI
           value: http://mlflow.mlflow.svc.cluster.local:5000
         - name: MLFLOW_S3_ENDPOINT_URL

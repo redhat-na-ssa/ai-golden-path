@@ -1,0 +1,66 @@
+{{- if .Values.useServingRuntime }}
+apiVersion: serving.kserve.io/v1alpha1
+kind: ServingRuntime
+metadata:
+  annotations:
+    opendatahub.io/apiProtocol: REST
+    opendatahub.io/recommended-accelerators: '["nvidia.com/gpu"]'
+    opendatahub.io/template-display-name: OpenVINO Model Server
+    opendatahub.io/template-name: ovms
+    openshift.io/display-name: {{ .Release.Name }}
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    opendatahub.io/dashboard: 'true'
+spec:
+  supportedModelFormats:
+    - autoSelect: true
+      name: openvino_ir
+      version: opset1
+    - autoSelect: true
+      name: onnx
+      version: '1'
+    - autoSelect: true
+      name: tensorflow
+      version: '2'
+  builtInAdapter:
+    env:
+      - name: OVMS_FORCE_TARGET_DEVICE
+        value: AUTO
+    memBufferBytes: 134217728
+    modelLoadingTimeoutMillis: 90000
+    runtimeManagementPort: 8888
+    serverType: ovms
+  multiModel: true
+  containers:
+    - args:
+        - '--port=8001'
+        - '--rest_port=8888'
+        - '--config_path=/models/model_config_list.json'
+        - '--file_system_poll_wait_seconds=0'
+        - '--grpc_bind_address=0.0.0.0'
+        - '--rest_bind_address=0.0.0.0'
+      image: 'quay.io/modh/openvino_model_server@sha256:f1140e9d987580d1aab1ccc62519b48b1d2673308b2db496e9e505e3be788d9f'
+      name: ovms
+      resources:
+        limits:
+          cpu: '2'
+          memory: 8Gi
+        requests:
+          cpu: '1'
+          memory: 4Gi
+      volumeMounts:
+        - mountPath: /dev/shm
+          name: shm
+  protocolVersions:
+    - grpc-v1
+  grpcEndpoint: 'port:8085'
+  volumes:
+    - emptyDir:
+        medium: Memory
+        sizeLimit: 2Gi
+      name: shm
+  replicas: {{ .Values.replicaCount }}
+  tolerations: []
+  grpcDataEndpoint: 'port:8001'
+{{- endif }}
