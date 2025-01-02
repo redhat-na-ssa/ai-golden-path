@@ -11,5 +11,8 @@ spec:
         labels:
           tekton.dev/pipeline: cron-job
       spec:
+        taskRunSpecs:
+        - pipelineTaskName: evaluate
+          taskServiceAccountName: model-controller
         pipelineRef:
           name: train-and-evaluate
