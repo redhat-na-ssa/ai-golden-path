@@ -26,7 +26,6 @@ spec:
       modelFormat:
         name: onnx
         version: '1'
-      runtime: {{ cookiecutter.project_name }}
       storage:
         key: aws-connection-my-storage"""
 
@@ -54,6 +53,7 @@ def _build_model_info(name: str, path: str) -> dict:
     base_config["metadata"]["name"] = _title_to_kebab_case(name)
     base_config["metadata"]["namespace"] = _get_namespace()
     base_config["spec"]["predictor"]["model"]["storage"]["path"] = path
+    base_config["spec"]["predictor"]["model"]["runtime"] = _get_namespace()
     return base_config
 
 

@@ -22,6 +22,15 @@ def _build_filter_string(is_immutable: bool, var_name: str, value: Any) -> str:
         return "metrics." + var_name + ' = ' + str(value)  # Expects a double
 
 
+def _adjust_runtime_path_for_bucket(artifact_uri: str) -> str:
+    return_path = artifact_uri
+    if return_path.startswith("s3://"):
+        return_path = return_path[5:]
+    if return_path.startswith("mlflow/"):
+        return_path = return_path[7:]
+    return return_path
+
+
 def save_model(model,
                model_version: Union[str, Tuple[str, str, str]],
                mlflow_subpackage=None,
@@ -174,6 +183,11 @@ def update_active_runs(test_fraction_by_run: Dict[str, float],
     new_run_set: Set[str] = {run.run_id for _, run in new_runs.iterrows()}
     active_run_set: Set[str] = {run.run_id for _, run in active_runs.iterrows()}
     canary_runs_set: Set[str] = {run.run_id for _, run in canary_runs.iterrows()}
+    run_information: Dict[str, DataFrame] = {
+        **{run.run_id: run for _, run in new_runs.iterrows()},
+        **{run.run_id: run for _, run in active_runs.iterrows()},
+        **{run.run_id: run for _, run in canary_runs.iterrows()}
+    }
 
     if test_fraction_by_run.keys() - new_run_set - active_run_set - canary_runs_set:
         raise ValueError("Attempting to modify a run that doesn't exist. Exiting to prevent odd behavior.")
@@ -191,7 +205,7 @@ def update_active_runs(test_fraction_by_run: Dict[str, float],
         else:
             change_status(run_to_update, ModelStatus.Active, test_fraction_by_run[run_to_update])
             if use_serving_runtime:
-                add_model(run_to_update.run_id, run_to_update.artifact_uri)
+                add_model(run_to_update, _adjust_runtime_path_for_bucket(run_information[run_to_update].artifact_uri))
 
 
 
@@ -235,7 +249,7 @@ def change_test_fractions(test_fraction_by_run: Dict[str, float],
         else:
             change_status(run_to_update, ModelStatus(run_dict[run_to_update]['metrics.active_state']), test_fraction_by_run[run_to_update])
             if use_serving_runtime:
-                add_model(run_to_update.run_id, run_to_update.artifact_uri)
+                add_model(run_to_update.run_id, _adjust_runtime_path_for_bucket(run_to_update.artifact_uri))
 
 
 def list_runs(model_version: Union[str, Tuple[str, str, str]],

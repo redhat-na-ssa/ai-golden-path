@@ -35,7 +35,7 @@ spec:
       containers:
       - env:
         - name: USE_SERVING_RUNTIME
-          value: {{ .Values.useServingRuntime }}
+          value: "{{ .Values.useServingRuntime }}"
         - name: ENVIRONMENT
 {{- if .Values.isProd }}
           value: prod

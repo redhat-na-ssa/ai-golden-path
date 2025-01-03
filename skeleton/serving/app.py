@@ -10,7 +10,7 @@ from uvicorn import run
 
 from contract import Contract, ResponseContract, ModelMetadata
 from common import USE_SERVING_RUNTIME
-from common.model_factory import invalidate_models, load_active_models, get_model_metadata
+from common.model_factory import invalidate_models, load_active_models, get_model_metadata, get_model
 from common.transformations import infer
 
 def seed_by_time():
@@ -75,7 +75,7 @@ def predict(request: Contract) -> ResponseContract:
     metadata = get_model_metadata(this_model)
     this_model_version = f"{metadata['params.major_version']}.{metadata['params.minor_version']}.{metadata['params.micro_version']}"
 
-    model = this_model[0]
+    model = get_model(this_model)
     results = infer(data, model, metadata.run_id)
 
     metadata = ModelMetadata(model_id=model_id,

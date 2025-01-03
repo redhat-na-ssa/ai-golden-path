@@ -87,6 +87,14 @@ spec:
             secretKeyRef:
               name: aws-connection-my-storage
               key: AWS_S3_ENDPOINT
+        - name: USE_SERVING_RUNTIME
+          value: "{{ .Values.useServingRuntime }}"
+        - name: ENVIRONMENT
+{{- if .Values.isProd }}
+          value: prod
+{{- else }}
+          value: dev
+{{- end }}
         - name: PIP_CERT
           value: /etc/pki/tls/custom-certs/ca-bundle.crt
         - name: REQUESTS_CA_BUNDLE

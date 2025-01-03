@@ -11,6 +11,8 @@ spec:
     - image: {{ include "image.dev-url" . }}-training:latest
       name: train
       env:
+      - name: USE_SERVING_RUNTIME
+        value: "{{ .Values.useServingRuntime }}"
       - name: MLFLOW_TRACKING_URI
         value: 'http://mlflow.mlflow.svc.cluster.local:5000'
       - name: MLFLOW_S3_ENDPOINT_URL
@@ -36,6 +38,10 @@ spec:
     - image: {{ include "image.dev-url" . }}-evaluation:latest
       name: evaluate
       env:
+      - name: USE_SERVING_RUNTIME
+        value: "{{ .Values.useServingRuntime }}"
+      - name: ENVIRONMENT
+        value: dev
       - name: MLFLOW_TRACKING_URI
         value: 'http://mlflow.mlflow.svc.cluster.local:5000'
       - name: MLFLOW_S3_ENDPOINT_URL

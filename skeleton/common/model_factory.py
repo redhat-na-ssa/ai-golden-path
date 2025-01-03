@@ -51,5 +51,11 @@ def load_active_models() -> Dict[str, Union[Sequence, Tuple[Sequence, Sequence]]
 
 def get_model_metadata(model_data: Union[Sequence, Tuple[Sequence, Sequence]]) -> Sequence:
     if USE_SERVING_RUNTIME:
-        return model_data['metrics.test_fraction']
-    return model_data[1]['metrics.test_fraction']
+        return model_data
+    return model_data[1]
+
+
+def get_model(model_data: Union[Sequence, Tuple[Sequence, Sequence]]) -> Optional[Any]:
+    if USE_SERVING_RUNTIME:
+        return None
+    return model_data[0]
