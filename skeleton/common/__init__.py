@@ -20,6 +20,6 @@ def _strtobool (val):
 
 MODEL_NAME = "{{ cookiecutter.project_name }}"
 MODEL_VERSION = "0.0.1"
-USE_SERVING_RUNTIME = _strtobool(getenv("USE_SERVING_RUNTIME"))
+USE_SERVING_RUNTIME = _strtobool(getenv("USE_SERVING_RUNTIME") or "False")
 
 CACHE_TTL = 600
