@@ -25,6 +25,14 @@ spec:
             title: Project Description
             type: string
             description: Description of the AI Project
+          useServingRuntime:
+            title: Use Serving Runtime
+            type: string
+            description: Description of the AI Project
+            default: 'False'
+            enum:
+              - 'True'
+              - 'False'
     - title: Provide Cluster And Image Registry Information
       required:
         - host
@@ -141,6 +149,7 @@ spec:
           deployment_name: ai-template
           user: ${{ user.entity.metadata.name }}
           verify_commits: ${{ parameters.repo.verify_commits }}
+          use_serving_runtime: ${{ parameters.useServingRuntime }}
         targetPath: ./tenant-gitops
     - id: publish-gitops
       name: Publishing to Resource Repository

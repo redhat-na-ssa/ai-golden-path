@@ -1,4 +1,4 @@
-from typing import Tuple, Dict, Sequence
+from typing import Tuple, Dict, Sequence, Union
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Response, status
 from fastapi.middleware.cors import CORSMiddleware
@@ -9,7 +9,8 @@ from time import time_ns
 from uvicorn import run
 
 from contract import Contract, ResponseContract, ModelMetadata
-from common.model_factory import invalidate_models, load_active_models
+from common import USE_SERVING_RUNTIME
+from common.model_factory import invalidate_models, load_active_models, get_model_metadata, get_model
 from common.transformations import infer
 
 def seed_by_time():
@@ -39,7 +40,7 @@ def healthcheck(response: Response) -> str:
     return "Ok"
 
 
-def choose_request_model(models: Dict[str, Tuple[Sequence, Sequence]]) -> str:
+def choose_request_model(models: Dict[str, Union[Sequence, Tuple[Sequence, Sequence]]]) -> str:
     """
     Randomly select a live model to predict with based on the test fractions provided.
 
@@ -52,7 +53,8 @@ def choose_request_model(models: Dict[str, Tuple[Sequence, Sequence]]) -> str:
     rng_value = random()
     total_value = 0
     for run_id, this_model_data in models.items():
-        total_value += this_model_data[1]['metrics.test_fraction']
+        metadata = get_model_metadata(this_model_data)
+        total_value += metadata['metrics.test_fraction']
         if rng_value < total_value:
             return run_id
 
@@ -70,14 +72,15 @@ def predict(request: Contract) -> ResponseContract:
     models = load_active_models()
     model_id = choose_request_model(models)
     this_model = models[model_id]
-    model = this_model[0]
-    this_model_version = f"{this_model[1]['params.major_version']}.{this_model[1]['params.minor_version']}.{this_model[1]['params.micro_version']}"
+    metadata = get_model_metadata(this_model)
+    this_model_version = f"{metadata['params.major_version']}.{metadata['params.minor_version']}.{metadata['params.micro_version']}"
 
-    results = infer(data, model)
+    model = get_model(this_model)
+    results = infer(data, model, metadata.run_id)
 
     metadata = ModelMetadata(model_id=model_id,
                              model_version=this_model_version,
-                             submodel_name=this_model[1]['params.submodel_name'])
+                             submodel_name=metadata['params.submodel_name'])
     return ResponseContract(value=results[0],
                             metadata=[metadata])
 

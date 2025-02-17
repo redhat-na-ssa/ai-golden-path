@@ -3,6 +3,8 @@ app:
   namespace: ${{values.component_id}}-dev
   cluster: ${{ values.cluster }}
 
+useServingRuntime: ${{ values.use_serving_runtime }}
+
 git:
   branch: main
   repo: ${{ values.source_repository }}

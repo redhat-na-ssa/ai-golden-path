@@ -17,10 +17,10 @@ metadata:
     - python
     - ai
   links:
-    - url: https://devspaces{{cookiecutter.cluster}}/#https://{{cookiecutter.host}}/{{cookiecutter.destination}}
+    - url: https://devspaces{{cookiecutter.cluster}}/#https://{{cookiecutter.host}}/{{cookiecutter.destination}}?che-editor=che-incubator/che-code/latest
       title: OpenShift Dev Spaces (VS Code)
       icon: web
-    - url: https://devspaces{{cookiecutter.cluster}}/#https://{{cookiecutter.host}}/{{cookiecutter.destination}}?che-editor=https://raw.githubusercontent.com/che-incubator/jetbrains-editor-images/main/devfiles/next/che-pycharm/2022.1-next.yaml
+    - url: https://devspaces{{cookiecutter.cluster}}/#https://{{cookiecutter.host}}/{{cookiecutter.destination}}
       title: OpenShift Dev Spaces (JetBrains PyCharm)
       icon: web
 spec:
@@ -42,7 +42,7 @@ spec:
   lifecycle: production
   owner: {{cookiecutter.owner}}
   definition:
-    $text: https://{{cookiecutter.component_id}}-prod-app-{{cookiecutter.component_id}}-prod/{{cookiecutter.cluster}}/openapi.json
+    $text: https://{{cookiecutter.component_id}}-prod-app-{{cookiecutter.component_id}}-prod{{cookiecutter.cluster}}/openapi.json
 ---
 apiVersion: backstage.io/v1alpha1
 kind: API
